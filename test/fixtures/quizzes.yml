@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  quiz_text: MyText
+  send_to_line: false
+  question: one
+
+two:
+  quiz_text: MyText
+  send_to_line: false
+  question: two
