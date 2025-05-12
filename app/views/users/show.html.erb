@@ -1,0 +1,17 @@
+<h2>ユーザー情報</h2>
+
+<p><strong>メールアドレス：</strong><%= @user.email %></p>
+<p><strong>登録日時：</strong><%= @user.created_at.strftime("%Y年%m月%d日 %H:%M") %></p>
+
+<% if @user.line_linked? %>
+  <p><strong>LINE連携：</strong><span style="color: green;">連携済み</span></p>
+<% else %>
+  <p><strong>LINE連携：</strong><span style="color: red;">未連携</span></p>
+  <%= link_to "LINE連携をする", new_line_account_path, class: 'button' %>
+<% end %>
+
+<h3>これまでの質問数：</h3>
+<p><%= @user.questions.count %> 件</p>
+
+<%= link_to '質問一覧を見る', questions_path, class: 'button' %>
+<%= link_to '新しい質問をする', new_question_path, class: 'button' %>

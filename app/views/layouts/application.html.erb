@@ -11,6 +11,12 @@
   </head>
 
   <body>
+    <% if user_signed_in? %>
+      <p style="text-align:right; margin: 10px;">ログイン中：<%= current_user.email %></p>
+    <% else %>
+      <p style="text-align:right; margin: 10px;">ログインしていません</p>
+    <% end %>
+
     <%= yield %>
   </body>
 </html>

@@ -1,10 +1,17 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  get 'line_accounts/new'
+  get 'line_accounts/create'
+  devise_for :users
+  root 'questions#new'
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
+  resources :users, only: [:show]
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  resources :line_accounts, only: [:new, :create]
+
+  post '/line/webhook', to: 'line_webhook#callback'
+
+  resources :questions, only: [:new, :create, :index, :show]do
+    resources :answers, only: [:create, :index]
+    resource  :quiz, only: [:show, :update]  # ←単数形でスッキリ
+  end
 end
