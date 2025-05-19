@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'gemini/index'
   get 'line_accounts/new'
   get 'line_accounts/create'
   devise_for :users
@@ -14,4 +15,8 @@ Rails.application.routes.draw do
     resources :answers, only: [:create, :index]
     resource  :quiz, only: [:show, :update]  # ←単数形でスッキリ
   end
+
+  get 'gemini', to: 'gemini#index'
+
+  
 end
