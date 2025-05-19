@@ -3,4 +3,8 @@
 <p><strong>内容:</strong> <%= @question.content %></p>
 <p><strong>作成日:</strong> <%= @question.created_at.strftime("%Y/%m/%d %H:%M") %></p>
 
+<!-- app/views/questions/show.html.erb -->
+<h3>AIの回答</h3>
+<p><%= @question.answer_text.presence || "回答がまだありません。" %></p>
+
 <%= link_to '戻る', questions_path, class: 'button' %>

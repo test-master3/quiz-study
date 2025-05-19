@@ -5,7 +5,7 @@ class GeminiController < ApplicationController
     prompt = "こんにちは！簡単な挨拶を作ってください。"
 
     response = HTTParty.post(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=#{api_key}",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=#{api_key}",
       headers: { 'Content-Type' => 'application/json' },
       body: {
         contents: [

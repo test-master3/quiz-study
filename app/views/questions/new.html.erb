@@ -18,20 +18,29 @@
 
   <!-- メイン画面 -->
   <div class="main-content">
-    <!-- 質問フォーム -->
-    <div class="box">
-      <h3>質問入力画面</h3>
-      <%= form_with model: @question, local: true do |form| %>
-        <%= form.text_area :content, rows: 6, style: "width: 100%; height: 120px;" %>
-        <%= form.submit "送信" %>
-      <% end %>
-    </div>
+<!-- 質問フォーム -->
+<div class="box">
+  <h3>質問入力画面</h3>
+  <%= form_with model: @question, local: true do |form| %>
+    <%= form.text_area :content, rows: 6, style: "width: 100%; height: 120px;" %>
+    <%= form.submit "送信" %>
+  <% end %>
+</div>
 
-    <!-- GPT回答画面 -->
-    <div class="box">
-      <h3>GPT回答画面</h3>
-      <p><%= @answer_text if @answer_text.present? %></p>
-    </div>
+<!-- 最新の質問と回答 -->
+<% if @latest_question.present? %>
+  <div class="box">
+    <h3>直近の質問</h3>
+    <p><%= @latest_question.content %></p>
+
+    <h3>GPT回答</h3>
+    <% if @latest_question.answer_text.present? %>
+      <p><%= @latest_question.answer_text %></p>
+    <% else %>
+      <p>まだ回答がありません。</p>
+    <% end %>
+  </div>
+<% end %>
 
     <!-- クイズ出力画面 -->
     <div class="box">
