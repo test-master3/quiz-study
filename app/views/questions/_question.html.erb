@@ -1,12 +1,20 @@
-<!-- app/views/questions/_question.html.erb -->
-<div class="box">
+<%# app/views/questions/_question.html.erb %>
+<div class="box" id="<%= dom_id(question) %>"> <%# dom_id ヘルパーでユニークなIDを付与 %>
   <h3>質問</h3>
-  <p><%= question.content %></p>
+  <p><%= Rinku.auto_link(simple_format(h(question.content)), :all, 'target="_blank" rel="noopener noreferrer"').html_safe %></p> <%# simple_format と auto_link の例 %>
 
-  <h3>GPT回答</h3>
+  <h3>AIの回答 (Gemini)</h3> <%# "GPT回答" から "AIの回答 (Gemini)" など具体的に変更 %>
   <% if question.answer_text.present? %>
-    <p><%= question.answer_text %></p>
+    <p><%= Rinku.auto_link(simple_format(h(question.answer_text)), :all, 'target="_blank" rel="noopener noreferrer"').html_safe %></p>
   <% else %>
     <p>まだ回答がありません。</p>
   <% end %>
+
+  <p style="font-size: 0.9em; color: gray;">
+    投稿日時：<%= question.created_at.strftime("%Y/%m/%d %H:%M") %>
+  </p>
+  
+  <%# 詳細を見るリンクは必要に応じて %>
+  <%# <%= link_to '詳細を見る', question_path(question), class: 'button' %> %>
+  <hr>
 </div>

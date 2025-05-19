@@ -1,3 +1,19 @@
-<!-- app/views/questions/create.turbo_stream.erb -->
-<%= turbo_stream.prepend "questions", partial: "questions/question", locals: { question: @question } %>
-<%= turbo_stream.replace "question_form", partial: "questions/form", locals: { question: Question.new } %>
+<%# app/views/questions/create.turbo_stream.erb %>
+
+<%# 1. 新しい質問を質問一覧の先頭に追加する %>
+<%#    ターゲットは <div id="questions"> です。 %>
+<%= turbo_stream.prepend "questions" do %>
+  <%= render partial: "questions/question", locals: { question: @question } %>
+<% end %>
+
+<%# 2. 質問フォームをクリア（または新しいフォームに置き換える） %>
+<%#    ここでは、新しい Question オブジェクトでフォームパーシャルを再描画して置き換える例 %>
+<%#    ターゲットは <div id="question_form_container"> またはフォーム自体 <form id="new_question_form"> など %>
+<%= turbo_stream.replace "question_form_container" do %>
+  <%= render partial: "questions/form", locals: { question: Question.new } %>
+<% end %>
+
+<%# (オプション) 通知メッセージを表示する場合 %>
+<%# <%= turbo_stream.prepend "notifications" do %>
+<%#   <div class="alert alert-success">質問を送信しました！</div> %>
+<%# <% end %>

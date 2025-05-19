@@ -71,3 +71,5 @@ gem 'devise'
 
 gem "httparty", "~> 0.23.1"
 
+gem 'rinku'
+

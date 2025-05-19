@@ -1,40 +1,34 @@
+<%# app/views/questions/index.html.erb (または関連するメインビュー) %>
 <div class="container">
-  <!-- 左のサイドバー -->
   <div class="sidebar">
-  <h2 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 16px;">
-  quiz-study アプリ
-  </h2>
-  <% if user_signed_in? %>
-    <p>ようこそ：<%= current_user.email %></p>
-    <%= link_to 'マイページ', user_path(current_user), class: 'button' %>
-    <%= link_to 'LINE連携', new_line_account_path, class: 'button' %>
-    <%= link_to '回答履歴', questions_path, class: 'button' %>
-  <%= link_to 'ログアウト', destroy_user_session_path, method: :delete, data: { turbo: false }, class: 'button' %>
-  <% else %>
-    <%= link_to '新規登録', new_user_registration_path, class: 'button' %>
-    <%= link_to 'ログイン', new_user_session_path, class: 'button' %>
-  <% end %>
-</div>
+    <h2 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 16px;">
+      quiz-study アプリ
+    </h2>
+    <% if user_signed_in? %>
+      <p>ようこそ：<%= current_user.email %></p>
+      <%= link_to 'マイページ', user_path(current_user), class: 'button' %>
+      <%= link_to 'LINE連携', new_line_account_path, class: 'button' %>
+      <%# <%= link_to '回答履歴', questions_path, class: 'button' %> <%# 現在のページが回答履歴なら不要 %>
+      <%= link_to 'ログアウト', destroy_user_session_path, method: :delete, data: { turbo_stream: false, turbo_confirm: 'ログアウトしますか？' }, class: 'button' %>
+    <% else %>
+      <%= link_to '新規登録', new_user_registration_path, class: 'button' %>
+      <%= link_to 'ログイン', new_user_session_path, class: 'button' %>
+    <% end %>
+  </div>
 
-  <!-- メイン画面 -->
   <div class="main-content">
-<!-- 質問フォーム -->
-<div id="question_form" class="box">
-  <h3>質問入力画面</h3>
-  <%= form_with model: @question, local: false do |form| %>
-    <%= form.text_area :content, rows: 6, style: "width: 100%; height: 120px;" %>
-    <%= form.submit "送信" %>
-  <% end %>
-</div>
+    <%# _form.html.erb を使う場合 %>
+    <div id="question_form_container"> <%# フォーム全体を囲むコンテナにIDを付与 %>
+      <%= render partial: "questions/form", locals: { question: @question } %>
+    </div>
 
-<!-- 最新の質問と回答 -->
-<div id="questions">
-  <% @questions.each do |question| %>
-    <%= render partial: "questions/question", locals: { question: question } %>
-  <% end %>
-</div>
+    <%# この <div id="questions"> が非同期更新のターゲットになります %>
+    <div id="questions">
+      <% @questions.each do |question| %>
+        <%= render partial: "questions/question", locals: { question: question } %>
+      <% end %>
+    </div>
 
-    <!-- クイズ出力画面 -->
     <div class="box">
       <h3>クイズ出力画面</h3>
       <p>LINEにクイズを送りますか？</p>
@@ -44,3 +38,5 @@
   </div>
 </div>
 
+<%# ページ下部の "新しい質問をする" ボタン (これは new アクションへのリンクなのでそのままで良いでしょう) %>
+<%# <%= link_to '新しい質問をする', new_question_path, class: 'button' %> %>

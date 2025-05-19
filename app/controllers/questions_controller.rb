@@ -17,21 +17,47 @@ class QuestionsController < ApplicationController
   end
 
 # app/controllers/questions_controller.rb
+# app/controllers/questions_controller.rb の create アクション (一部抜粋)
+# (現在の questions_controller_rb_v2 のままで基本的にはOKのはずです)
 def create
   @question = current_user.questions.build(question_params)
   if @question.save
-    answer = fetch_gemini_response(@question.content)
-    @question.update(answer_text: answer)
+    answer_or_error = fetch_gemini_response(@question.content)
 
-    @questions = Question.order(created_at: :desc) # ⭐️これを追加！
-
-    respond_to do |format|
-      format.turbo_stream
-      format.html { redirect_to new_question_path, notice: "質問を送信しました" }
+    if answer_or_error.is_a?(String) && !answer_or_error.start_with?("エラー：")
+      @question.update(answer_text: answer_or_error)
+      # 成功時は turbo_stream 形式で応答する (デフォルトの動作)
+      # redirect_to は format.html の場合にのみ使われる
+      respond_to do |format|
+        format.turbo_stream # これにより create.turbo_stream.erb が呼ばれる
+        format.html { redirect_to @question, notice: '質問を送信し、回答を生成しました！' }
+      end
+    else
+      # APIエラーの場合
+      flash.now[:alert] = "回答の生成中にエラーが発生しました。詳細はログを確認してください。 (エラー内容: #{answer_or_error})"
+      @questions = Question.order(created_at: :desc) # newテンプレートで@questionsが必要なため
+      respond_to do |format|
+        format.turbo_stream {
+          render turbo_stream: turbo_stream.replace("question_form_container", # またはフォームのID
+                              partial: "questions/form",
+                              locals: { question: @question }) # エラーメッセージをフォームに表示する場合
+          # もしくは、flashメッセージを表示するturbo_streamを追加
+          # turbo_stream.prepend "notifications", partial: "layouts/flash" など
+        }
+        format.html { render :new, status: :unprocessable_entity }
+      end
     end
   else
-    @questions = Question.order(created_at: :desc)
-    render :new, status: :unprocessable_entity
+    # バリデーションエラーの場合
+    @questions = Question.order(created_at: :desc) # newテンプレートで@questionsが必要なため
+    respond_to do |format|
+      format.turbo_stream {
+        render turbo_stream: turbo_stream.replace("question_form_container", # またはフォームのID
+                            partial: "questions/form",
+                            locals: { question: @question }) # バリデーションエラーをフォームに表示
+      }
+      format.html { render :new, status: :unprocessable_entity }
+    end
   end
 end
 
