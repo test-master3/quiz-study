@@ -1,0 +1,12 @@
+<!-- app/views/questions/_question.html.erb -->
+<div class="box">
+  <h3>質問</h3>
+  <p><%= question.content %></p>
+
+  <h3>GPT回答</h3>
+  <% if question.answer_text.present? %>
+    <p><%= question.answer_text %></p>
+  <% else %>
+    <p>まだ回答がありません。</p>
+  <% end %>
+</div>

@@ -1,0 +1,9 @@
+<%# app/views/questions/_form.html.erb %>
+<%# このフォームのコンテナにIDを付与するか、フォーム自体にIDを付与する %>
+<div class="box" id="question_form_box"> <%# 変更例: IDを "question_form_box" に %>
+  <h3>質問入力画面</h3>
+  <%= form_with model: question, local: false, id: "new_question_form" do |form| %> <%# フォーム自体にID "new_question_form" を付与 %>
+    <%= form.text_area :content, rows: 6, style: "width: 100%; height: 120px;" %>
+    <%= form.submit "送信" %>
+  <% end %>
+</div>

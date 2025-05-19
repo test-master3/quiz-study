@@ -13,22 +13,27 @@ class QuestionsController < ApplicationController
 
   def new
     @question = Question.new
-    @latest_question = Question.order(created_at: :desc).first # ← 追加
+    @questions = Question.order(created_at: :desc) # ← 追加
   end
 
-  def create
-    @question = current_user.questions.build(question_params)
-    if @question.save
-      answer_or_error = fetch_gemini_response(@question.content)
-      @question.update(answer_text: answer_or_error) unless answer_or_error.start_with?("エラー：")
-  
-      # 💡 new画面に戻って一覧も表示させる
-      redirect_to new_question_path, notice: '質問を送信し、回答を生成しました！'
-    else
-      @questions = Question.order(created_at: :desc)
-      render :new, status: :unprocessable_entity
+# app/controllers/questions_controller.rb
+def create
+  @question = current_user.questions.build(question_params)
+  if @question.save
+    answer = fetch_gemini_response(@question.content)
+    @question.update(answer_text: answer)
+
+    @questions = Question.order(created_at: :desc) # ⭐️これを追加！
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to new_question_path, notice: "質問を送信しました" }
     end
+  else
+    @questions = Question.order(created_at: :desc)
+    render :new, status: :unprocessable_entity
   end
+end
 
   private
 
