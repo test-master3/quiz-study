@@ -19,47 +19,76 @@ class QuestionsController < ApplicationController
 # app/controllers/questions_controller.rb
 # app/controllers/questions_controller.rb の create アクション (一部抜粋)
 # (現在の questions_controller_rb_v2 のままで基本的にはOKのはずです)
+# def create
+#   @question = current_user.questions.build(question_params)
+
+#   if @question.save
+#     quiz_data = fetch_quiz_and_answer(@question.content)
+
+#     if quiz_data.is_a?(Hash)
+#       @question.update(
+#         answer_text: quiz_data[:answer_text],
+#         quiz_question: quiz_data[:quiz_question],
+#         quiz_choices: quiz_data[:quiz_choices],
+#         quiz_answer: quiz_data[:quiz_answer]
+#       )
+
+#       respond_to do |format|
+#         format.turbo_stream
+#         format.html { redirect_to @question, notice: '質問を送信し、回答とクイズを生成しました！' }
+#       end
+#     else
+#       # Gemini APIでエラーが返ってきた場合（文字列で返ってくる）
+#       flash.now[:alert] = "回答とクイズの生成中にエラーが発生しました。#{quiz_data}"
+#       @questions = Question.order(created_at: :desc)
+#       respond_to do |format|
+#         format.turbo_stream {
+#           render turbo_stream: turbo_stream.replace("question_form_container",
+#             partial: "questions/form", locals: { question: @question })
+#         }
+#         format.html { render :new, status: :unprocessable_entity }
+#       end
+#     end
+#   else
+#     # バリデーションエラー
+#     @questions = Question.order(created_at: :desc)
+#     respond_to do |format|
+#       format.turbo_stream {
+#         render turbo_stream: turbo_stream.replace("question_form_container",
+#           partial: "questions/form", locals: { question: @question })
+#       }
+#       format.html { render :new, status: :unprocessable_entity }
+#     end
+#   end
+# end
+
 def create
   @question = current_user.questions.build(question_params)
   if @question.save
-    answer_or_error = fetch_gemini_response(@question.content)
+    # Geminiから回答とクイズを取得（クイズ機能を入れている場合はこちら）
+    result = fetch_quiz_and_answer(@question.content)
 
-    if answer_or_error.is_a?(String) && !answer_or_error.start_with?("エラー：")
-      @question.update(answer_text: answer_or_error)
-      # 成功時は turbo_stream 形式で応答する (デフォルトの動作)
-      # redirect_to は format.html の場合にのみ使われる
-      respond_to do |format|
-        format.turbo_stream # これにより create.turbo_stream.erb が呼ばれる
-        format.html { redirect_to @question, notice: '質問を送信し、回答を生成しました！' }
-      end
+    if result.is_a?(Hash)
+      @question.update(
+        answer_text: result[:answer_text],
+        quiz_question: result[:quiz_question],
+        quiz_choices: result[:quiz_choices],
+        quiz_answer: result[:quiz_answer]
+      )
     else
-      # APIエラーの場合
-      flash.now[:alert] = "回答の生成中にエラーが発生しました。詳細はログを確認してください。 (エラー内容: #{answer_or_error})"
-      @questions = Question.order(created_at: :desc) # newテンプレートで@questionsが必要なため
-      respond_to do |format|
-        format.turbo_stream {
-          render turbo_stream: turbo_stream.replace("question_form_container", # またはフォームのID
-                              partial: "questions/form",
-                              locals: { question: @question }) # エラーメッセージをフォームに表示する場合
-          # もしくは、flashメッセージを表示するturbo_streamを追加
-          # turbo_stream.prepend "notifications", partial: "layouts/flash" など
-        }
-        format.html { render :new, status: :unprocessable_entity }
-      end
+      flash[:alert] = "回答生成エラー: #{result}"
     end
+
+    # 🚨 リダイレクトで `/questions`（トップページ）に戻す
+    redirect_to new_question_path, notice: "質問が投稿されました！"
+
   else
-    # バリデーションエラーの場合
-    @questions = Question.order(created_at: :desc) # newテンプレートで@questionsが必要なため
-    respond_to do |format|
-      format.turbo_stream {
-        render turbo_stream: turbo_stream.replace("question_form_container", # またはフォームのID
-                            partial: "questions/form",
-                            locals: { question: @question }) # バリデーションエラーをフォームに表示
-      }
-      format.html { render :new, status: :unprocessable_entity }
-    end
+    @questions = Question.order(created_at: :desc)
+    render :new, status: :unprocessable_entity
   end
 end
+  
+
 
   private
 
@@ -71,85 +100,55 @@ end
     params.require(:question).permit(:content)
   end
 
-  def fetch_gemini_response(prompt)
+  def fetch_quiz_and_answer(prompt)
     api_key = ENV['GOOGLE_API_KEY']
-    unless api_key
-      Rails.logger.error "Gemini API Key (GOOGLE_API_KEY) is not set."
-      return "エラー：APIキーが設定されていません。"
-    end
+    return "エラー：APIキーが設定されていません。" unless api_key
 
-    # ★★★ 修正点: モデル名を "gemini-1.5-flash" に変更 ★★★
-    # このモデルは、以前のスクリーンショットで割り当てが確認できていました。
     url = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=#{api_key}"
-
     headers = { 'Content-Type' => 'application/json' }
+
+   full_prompt = <<~PROMPT
+  次の説明文に基づいて、1. 回答（100文字以上） 2. 三択クイズ を日本語で生成してください。
+
+【説明文】
+#{prompt}
+
+【出力フォーマット】
+回答: 〇〇〇
+クイズ: 〇〇〇は何ですか？
+選択肢:
+1. 〇〇
+2. 〇〇
+3. 〇〇
+正解: 1
+PROMPT
+
     body = {
       contents: [
-        {
-          role: 'user',
-          parts: [
-            { text: prompt }
-          ]
-        }
+        { role: 'user', parts: [{ text: full_prompt }] }
       ]
-      # generationConfig や safetySettings を追加することも可能です
-      # "generationConfig": {
-      #   "temperature": 0.9,
-      #   "maxOutputTokens": 2048 # gemini-1.5-flash の最大値に合わせて調整
-      # },
-      # "safetySettings": [
-      #   {
-      #     "category": "HARM_CATEGORY_HARASSMENT",
-      #     "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-      #   }
-      # ]
     }.to_json
 
-    Rails.logger.info "Requesting Gemini API..."
-    Rails.logger.info "URL: #{url.sub(api_key, '[REDACTED_API_KEY]')}"
-    Rails.logger.info "Prompt Length: #{prompt.length} characters"
-    # Rails.logger.debug "Request Body: #{body}"
-
     begin
-      response = HTTParty.post(url, headers: headers, body: body, timeout: 60)
+      response = HTTParty.post(url, headers: headers, body: body)
+      text = response.dig('candidates', 0, 'content', 'parts', 0, 'text')
 
-      Rails.logger.info "Gemini API Response Code: #{response.code}"
-      Rails.logger.debug "Gemini API Response Body: #{response.body}"
+      return "エラー：Geminiからの応答がありません。" unless text
 
-      if response.success?
-        candidate = response.dig('candidates', 0)
-        if candidate && candidate.dig('content', 'parts', 0, 'text')
-          return candidate['content']['parts'][0]['text']
-        elsif candidate && candidate.dig('finishReason')
-          error_message = "回答の生成に成功しましたが、有効なテキストがありませんでした。Finish Reason: #{candidate['finishReason']}"
-          error_message += ". Safety Ratings: #{candidate['safetyRatings'].inspect}" if candidate['safetyRatings']
-          Rails.logger.warn "Gemini API Warning: #{error_message}"
-          return "エラー：#{error_message}"
-        else
-          Rails.logger.error "Gemini API Error: Unexpected successful response structure. Body: #{response.body}"
-          return "エラー：予期しないレスポンス構造です。"
-        end
-      else
-        error_info = response.dig('error') || {}
-        status = error_info.dig('status') || 'UNKNOWN_STATUS'
-        message = error_info.dig('message') || '不明なエラーが発生しました。'
-        
-        if message.downcase.include?("quota") || message.downcase.include?("rate limit")
-            Rails.logger.warn "Gemini API Quota/Rate Limit Exceeded: Status=#{status}, Message=#{message}. Full Response: #{response.body}"
-        else
-            Rails.logger.error "Gemini API Error: Status=#{status}, Message=#{message}. Full Response: #{response.body}"
-        end
-        return "エラー：#{status} - #{message}"
-      end
-    rescue HTTParty::Error => e
-      Rails.logger.error "HTTParty Error during Gemini API call: #{e.message}"
-      return "エラー：APIへの接続に失敗しました (#{e.class.name})。"
-    rescue Net::ReadTimeout, Net::OpenTimeout => e
-      Rails.logger.error "Timeout Error during Gemini API call: #{e.message}"
-      return "エラー：APIへの接続がタイムアウトしました。"
-    rescue StandardError => e
-      Rails.logger.error "Unexpected Error during Gemini API call: #{e.message}\n#{e.backtrace.join("\n")}"
-      return "エラー：予期せぬ問題が発生しました。"
+      lines = text.split("\n").map(&:strip)
+      answer_line = lines.find { |l| l.start_with?("回答:") }
+      quiz_line = lines.find { |l| l.start_with?("クイズ:") }
+      choices = lines.select { |l| l =~ /^\d\.\s/ }
+      correct = lines.find { |l| l.start_with?("正解:") }
+
+      {
+        answer_text: answer_line&.gsub("回答:", "")&.strip,
+        quiz_question: quiz_line&.gsub("クイズ:", "")&.strip,
+        quiz_choices: choices.join("\n"),
+        quiz_answer: correct&.gsub("正解:", "")&.strip
+      }
+    rescue => e
+      "エラー：#{e.message}"
     end
   end
 end

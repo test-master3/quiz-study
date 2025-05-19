@@ -1,20 +1,31 @@
 <%# app/views/questions/_question.html.erb %>
-<div class="box" id="<%= dom_id(question) %>"> <%# dom_id ヘルパーでユニークなIDを付与 %>
+<div class="box" id="<%= dom_id(question) %>">
   <h3>質問</h3>
-  <p><%= Rinku.auto_link(simple_format(h(question.content)), :all, 'target="_blank" rel="noopener noreferrer"').html_safe %></p> <%# simple_format と auto_link の例 %>
+  <p><%= Rinku.auto_link(simple_format(h(question.content)), :all, 'target="_blank" rel="noopener noreferrer"').html_safe %></p>
 
-  <h3>AIの回答 (Gemini)</h3> <%# "GPT回答" から "AIの回答 (Gemini)" など具体的に変更 %>
+  <h3>AIの回答 (Gemini)</h3>
   <% if question.answer_text.present? %>
     <p><%= Rinku.auto_link(simple_format(h(question.answer_text)), :all, 'target="_blank" rel="noopener noreferrer"').html_safe %></p>
   <% else %>
     <p>まだ回答がありません。</p>
   <% end %>
 
+  <% if question.quiz_question.present? %>
+    <h3>クイズ</h3>
+    <p><%= h(question.quiz_question) %></p>
+
+    <h4>選択肢</h4>
+    <pre style="background: #f9f9f9; padding: 0.5em; border-radius: 4px;">
+<%= h(question.quiz_choices) %>
+    </pre>
+
+    <h4 style="color: green;">正解</h4>
+    <p><%= h(question.quiz_answer) %></p>
+  <% end %>
+
   <p style="font-size: 0.9em; color: gray;">
     投稿日時：<%= question.created_at.strftime("%Y/%m/%d %H:%M") %>
   </p>
-  
-  <%# 詳細を見るリンクは必要に応じて %>
-  <%# <%= link_to '詳細を見る', question_path(question), class: 'button' %> %>
+
   <hr>
 </div>
