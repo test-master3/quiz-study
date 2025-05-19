@@ -16,20 +16,54 @@
     <% end %>
   </div>
 
-  <div class="main-content">
-    <%# _form.html.erb を使う場合 %>
-    <div id="question_form_container"> <%# フォーム全体を囲むコンテナにIDを付与 %>
-      <%= render partial: "questions/form", locals: { question: @question } %>
-    </div>
-
-    <%# この <div id="questions"> が非同期更新のターゲットになります %>
-    <div id="questions">
-      <% @questions.each do |question| %>
-        <%= render partial: "questions/question", locals: { question: question } %>
-      <% end %>
-    </div>
+<%# app/views/questions/index.html.erb %>
+<div class="main-content chat-container">
+  <!-- ▼ 回答一覧エリア（上部・枠なし・最大幅） -->
+  <div class="chat-answers" id="questions">
+    <% @questions.each do |question| %>
+      <%= render partial: "questions/question", locals: { question: question } %>
+    <% end %>
   </div>
 </div>
+  <!-- ▼ 質問フォームエリア（下部・枠あり・最大幅） -->
+  <div class="chat-form" id="question_form_container">
+    <%= render partial: "questions/form", locals: { question: @question } %>
+  </div>
+
+<style>
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 回答エリア：枠なし・余白のみ */
+.chat-answers {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  background-color: #fff;
+  padding-bottom: 160px; /* 下にフォームがかぶらないように */
+}
+
+/* フォームエリア：高さ半分・枠あり・全幅表示 */
+.chat-form {
+  position: fixed;
+  bottom: 0;
+  left: 230px;  /* 👈 サイドバーの横に固定！ */
+  right: 0;
+  width: calc(100% - 260px);  /* 👈 サイドバーを避ける */
+  background-color: #fff;
+  padding: 1rem;
+  border-top: 1px solid #ccc;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+}
+</style>
 
 <%# ページ下部の "新しい質問をする" ボタン (これは new アクションへのリンクなのでそのままで良いでしょう) %>
-<%# <%= link_to '新しい質問をする', new_question_path, class: 'button' %> %>
+<%# <%= link_to '新しい質問をする', new_question_path, class: 'button' %> 
