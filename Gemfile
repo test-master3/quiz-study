@@ -65,6 +65,7 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  gem "webdrivers"
 end
 
 gem 'devise'
@@ -73,3 +74,5 @@ gem "httparty", "~> 0.23.1"
 
 gem 'rinku'
 
+
+gem "rspec-rails", "~> 7.1"
