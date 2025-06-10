@@ -1,21 +1,23 @@
 <%# 質問入力フォーム %>
 <div class="question-input-form">
-  <%= form_with model: question, url: questions_path, local: true, data: { controller: "enter-submit", enter_submit_target: "form" } do |f| %>
+  <%= form_with model: @question, url: questions_path, local: true do |f| %>
+
     <div class="question-form-radio-group">
       <span>クイズをLINEに送りますか？</span>
       <label><input type="radio" name="send_to_line" value="yes"> YES</label>
       <label><input type="radio" name="send_to_line" value="no" checked> NO</label>
     </div>
 
-    <%= f.text_area :content,
-      id: "question_content",
-      class: "question-textarea",
-      placeholder: "ここに質問を入力してください",
-      data: { enter_submit_target: "textarea" } %>
+    <div id="question_form_container">
+      <%= f.text_area :content,
+        id: "question_content",
+        class: "question-textarea",
+        placeholder: "ここに質問を入力してください" %>
 
-    <div class="question-form-footer">
-      <small class="question-form-hint">Ctrl + Enter または Command + Enter で送信</small>
-      <%= f.submit "送信", class: "submit-button" %>
+      <div class="question-form-footer">
+        <%= f.submit "送信", class: "submit-button" %>
+      </div>
     </div>
+
   <% end %>
 </div>

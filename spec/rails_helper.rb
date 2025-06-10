@@ -91,6 +91,10 @@ RSpec.configure do |config|
     driven_by :selenium_chrome_headless
   end
 
+  config.before(:each, type: :system, js: true) do
+    driven_by :selenium_chrome_headless
+  end
+
   require 'webdrivers'
   Webdrivers::Chromedriver.required_version = '137.0.7151.68'
 

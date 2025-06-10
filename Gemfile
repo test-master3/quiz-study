@@ -13,7 +13,7 @@ gem "sprockets-rails"
 
 # Use mysql as the database for Active Record
 group :development, :test do
-  gem "mysql2", "~> 0.5"
+gem "mysql2", "~> 0.5"
 end
 
 # Use postgresql as the database for production

@@ -1,33 +1,33 @@
 <%# app/views/questions/_question.html.erb %>
 <div id="<%= dom_id(question) %>" class="question-answer-container">
   <div class="question-section">
-    <h3>質問</h3>
+  <h3>質問</h3>
     <div class="content-area">
       <%= Rinku.auto_link(simple_format(h(question.content)), :all, 'target="_blank" rel="noopener noreferrer"').html_safe %>
     </div>
   </div>
 
   <div class="answer-section">
-    <h3>AIの回答 (Gemini)</h3>
+  <h3>AIの回答 (Gemini)</h3>
     <div class="content-area">
-      <% if question.answer_text.present? %>
+  <% if question.answer_text.present? %>
         <%= Rinku.auto_link(simple_format(h(question.answer_text)), :all, 'target="_blank" rel="noopener noreferrer"').html_safe %>
-      <% else %>
-        <p>まだ回答がありません。</p>
-      <% end %>
+  <% else %>
+    <p>まだ回答がありません。</p>
+  <% end %>
     </div>
   </div>
 
   <% if question.quiz_question.present? %>
     <div class="quiz-section">
-      <h3>クイズ</h3>
+    <h3>クイズ</h3>
       <div class="content-area">
         <%= h(question.quiz_question) %>
       </div>
 
-      <h4>選択肢</h4>
+    <h4>選択肢</h4>
       <div class="quiz-choices">
-        <%= h(question.quiz_choices) %>
+<%= h(question.quiz_choices) %>
       </div>
 
       <h4 class="correct-answer">正解</h4>
