@@ -2,6 +2,7 @@
 .container {
   display: flex;
   min-height: 100vh;
+  padding-bottom: 160px; /* 質問フォームの高さ分の余白を追加 */
 }
 
 /* サイドバー */
@@ -19,11 +20,52 @@
 }
 
 .sidebar-title {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   font-size: 16px;
   margin-bottom: 1rem;
+  color: #333;
+}
+
+/* サイドバーのボタン */
+.sidebar .button {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  background-color: #ffffff;
+  color: #333;
+  text-decoration: none;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+  transition: all 0.3s ease;
+}
+
+.sidebar .button:hover {
+  background-color: #e9ecef;
+  border-color: #ced4da;
+}
+
+.sidebar .button.button-danger {
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+
+.sidebar .button.button-danger:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+/* ユーザー情報 */
+.sidebar .user-info {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.sidebar .user-info p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
 }
 
 /* メインコンテンツ */
@@ -32,13 +74,13 @@
   width: calc(100% - 200px);
   min-height: 100vh;
   padding: 1rem;
-  padding-bottom: 160px;
 }
 
 /* チャットコンテナ */
 .chat-container {
   max-width: 800px;
   margin: 0 auto;
+  margin-bottom: 160px; /* 質問フォームの高さ分の余白を追加 */
 }
 
 /* チャット回答エリア */
@@ -65,8 +107,11 @@
 
 /* 質問と回答のコンテナ */
 .question-answer-container {
-  background-color: #fff;
   margin-bottom: 2rem;
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #ffffff;
 }
 
 .question-section,
@@ -75,45 +120,107 @@
   margin-bottom: 1.5rem;
 }
 
+/* 質問ヘッダー */
+.question-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* ユーザーバッジ */
+.user-badge {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+/* コンテンツエリア */
+.content-area {
+  margin: 1rem 0;
+  line-height: 1.6;
+}
+
+/* メタ情報 */
+.meta-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* アクションリンク */
+.action-links {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.action-links .button-small {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  color: #fff;
+  background-color: #6c757d;
+  border: none;
+}
+
+.action-links .button-small:hover {
+  background-color: #5a6268;
+}
+
+.action-links .button-small i {
+  font-size: 0.875rem;
+}
+
+.action-links .button-danger {
+  background-color: #dc3545;
+}
+
+.action-links .button-danger:hover {
+  background-color: #c82333;
+}
+
+/* ボタン */
+.button-small {
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.button-danger {
+  background-color: #ef5350;
+  color: white;
+}
+
+.button-danger:hover {
+  background-color: #d32f2f;
+}
+
+/* セクションヘッダー */
 .question-section h3,
 .answer-section h3,
 .quiz-section h3 {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
+  color: #333;
+  margin-bottom: 0.5rem;
 }
 
-.content-area {
-  line-height: 1.6;
-  margin-bottom: 1rem;
-}
-
-.content-area p {
-  margin-bottom: 1rem;
-}
-
-.quiz-choices {
-  background: #f9f9f9;
-  padding: 1rem;
-  border-radius: 4px;
-  margin: 1rem 0;
-  white-space: pre-wrap;
-}
-
-.correct-answer {
-  color: #28a745;
-  margin-top: 1rem;
-}
-
-.question-meta {
-  font-size: 0.9em;
-  color: #6c757d;
-  margin-top: 1rem;
-}
-
+/* 区切り線 */
 hr {
-  margin: 2rem 0;
-  border: 0;
-  border-top: 1px solid #dee2e6;
+  margin: 1.5rem 0;
+  border: none;
+  border-top: 1px solid #e0e0e0;
 }
 
 /* 質問入力フォーム */
@@ -122,12 +229,11 @@ hr {
   bottom: 0;
   left: 200px; /* サイドバーの幅 */
   right: 0;
-  /* background-color: #fff; */
   padding: 1rem;
   border-top: 1px solid #dee2e6;
-  /* box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05); */
-  z-index: 1000;
-  background-color: rgba(255, 0, 0, 0.1); /* 赤みで位置確認 */
+  z-index: 1100; /* 最前面に表示 */
+  background-color: #ffffff;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .question-form-radio-group {
@@ -195,4 +301,227 @@ hr {
   background-color: #0056b3;
   color: white;
   text-decoration: none;
+}
+
+/* マイページのスタイル */
+.user-profile {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-profile h2 {
+  color: #333;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.user-profile h3 {
+  color: #555;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.user-profile p {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.user-profile .info-item {
+  margin-bottom: 1rem;
+}
+
+.user-profile .info-label {
+  font-weight: bold;
+  color: #666;
+}
+
+.user-profile .status {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.user-profile .status-connected {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.user-profile .status-disconnected {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.user-profile .action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.user-profile .action-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  font-size: 1rem;
+}
+
+.user-profile .action-button:hover {
+  background-color: #0056b3;
+}
+
+.user-profile .action-button.line-button {
+  background-color: #00B900;
+}
+
+.user-profile .action-button.line-button:hover {
+  background-color: #009900;
+}
+
+.user-profile .action-button i {
+  font-size: 1.1rem;
+}
+
+/* 質問一覧のスタイル */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.question-item {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: box-shadow 0.3s;
+}
+
+.question-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.question-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #2196f3;
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+
+.question-link:hover {
+  color: #1976d2;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #666;
+  font-size: 0.9rem;
+  margin-right: 1.5rem;
+}
+
+.answer-preview {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+  color: #666;
+}
+
+.no-questions {
+  text-align: center;
+  padding: 3rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  color: #666;
+}
+
+.no-questions i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #ccc;
+}
+
+/* 質問詳細のスタイル */
+.detail-section {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-header {
+  margin-bottom: 1rem;
+}
+
+.section-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #333;
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.quiz-question,
+.quiz-choices,
+.quiz-answer {
+  margin-bottom: 1.5rem;
+}
+
+.quiz-question h3,
+.quiz-choices h3,
+.quiz-answer h3 {
+  color: #555;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.detail-footer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* アクションボタン */
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  font-size: 1rem;
+}
+
+.action-button:hover {
+  background-color: #0056b3;
+  color: white;
+}
+
+.action-button i {
+  font-size: 1.1rem;
 } 

@@ -82,3 +82,6 @@ gem 'devise'
 gem "httparty", "~> 0.23.1"
 
 gem 'rinku'
+
+gem 'rails-i18n'
+

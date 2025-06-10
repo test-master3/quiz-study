@@ -1,5 +1,9 @@
 class ApplicationController < ActionController::Base
-  before_action :basic_auth
+  before_action :basic_auth, if: -> { Rails.env.production? }
+
+  def after_sign_up_path_for(resource)
+    new_question_path
+  end
 
   private
 

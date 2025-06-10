@@ -8,6 +8,7 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   </head>
 
   <body>
@@ -22,7 +23,12 @@
       <% end %>
     </header>
     <!-- ▲ ヘッダーここまで -->
-
+  <% if notice %>
+    <p class="alert alert-success"><%= notice %></p>
+  <% end %>
+  <% if alert %>
+    <p class="alert alert-danger"><%= alert %></p>
+  <% end %>
     <%= yield %>
   </body>
 </html>

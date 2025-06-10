@@ -1,7 +1,7 @@
 # app/controllers/questions_controller.rb
 class QuestionsController < ApplicationController
+  before_action :authenticate_user!, except: [:new]
   before_action :set_question, only: %i[show]
-  before_action :authenticate_user!, only: [:create]
 
   def index
     @questions = Question.order(created_at: :desc)
@@ -13,7 +13,11 @@ class QuestionsController < ApplicationController
 
   def new
     @question = Question.new
-    @questions = Question.order(created_at: :desc) # ← 追加
+    if user_signed_in?
+      @questions = current_user.questions.order(created_at: :desc)
+    else
+      @questions = []
+    end
   end
 
 # app/controllers/questions_controller.rb

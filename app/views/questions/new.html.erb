@@ -3,14 +3,33 @@
   <div class="sidebar">
     <h2 class="sidebar-title">quiz-study アプリ</h2>
     <% if user_signed_in? %>
-      <p>ようこそ：<%= current_user.email %></p>
-      <%= link_to 'マイページ', user_path(current_user), class: 'button' %>
-      <%= link_to 'LINE連携', new_line_account_path, class: 'button' %>
+      <div class="user-info">
+        <p>ようこそ：<%= current_user.email %></p>
+      </div>
+      <%= link_to user_path(current_user), class: 'button' do %>
+        <i class="fas fa-user"></i>
+        <span>マイページ</span>
+      <% end %>
+      <%= link_to new_line_account_path, class: 'button' do %>
+        <i class="fab fa-line"></i>
+        <span>LINE連携</span>
+      <% end %>
       <%# <%= link_to '回答履歴', questions_path, class: 'button' %> <%# 現在のページが回答履歴なら不要 %>
-      <%= link_to 'ログアウト', destroy_user_session_path, data: { turbo_method: :delete, turbo_confirm: 'ログアウトしますか？' }, class: 'button' %>
+      <%= link_to destroy_user_session_path, 
+          data: { turbo_method: :delete, turbo_confirm: 'ログアウトしますか？' }, 
+          class: 'button button-danger' do %>
+        <i class="fas fa-sign-out-alt"></i>
+        <span>ログアウト</span>
+      <% end %>
     <% else %>
-      <%= link_to '新規登録', new_user_registration_path, class: 'button' %>
-      <%= link_to 'ログイン', new_user_session_path, class: 'button' %>
+      <%= link_to new_user_registration_path, class: 'button' do %>
+        <i class="fas fa-user-plus"></i>
+        <span>新規登録</span>
+      <% end %>
+      <%= link_to new_user_session_path, class: 'button' do %>
+        <i class="fas fa-sign-in-alt"></i>
+        <span>ログイン</span>
+      <% end %>
     <% end %>
   </div>
 
