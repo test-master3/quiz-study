@@ -23,5 +23,13 @@ RSpec.describe "質問機能", type: :system do
         expect(page).to have_content("質問が投稿されました！")
       end
     end
+
+    context "ログインしていない場合" do
+      it "質問投稿フォームが表示されないこと" do
+        visit new_question_path
+        expect(page).not_to have_selector(".question-input-form")
+        expect(page).to have_content("ログインが必要です")
+      end
+    end
   end
 end
