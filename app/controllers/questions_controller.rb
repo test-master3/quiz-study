@@ -101,7 +101,7 @@ end
   end
 
   def fetch_quiz_and_answer(prompt)
-    api_key = ENV['GOOGLE_API_KEY']
+    api_key = ENV['GEMINI_API_KEY']
     return "エラー：APIキーが設定されていません。" unless api_key
 
     url = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=#{api_key}"
