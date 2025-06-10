@@ -1,16 +1,20 @@
-// app/javascript/controllers/enter_submit_controller.js
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["textarea", "form"]
- 
+  static targets = ["form", "textarea"]
+
   connect() {
-    console.log("✅ EnterSubmitController connected!")
-    this.textareaTarget.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault()
-        this.formTarget.requestSubmit()
-      }
-    })
+    this.textareaTarget.addEventListener("keydown", this.handleKeyPress.bind(this))
   }
-}
+
+  disconnect() {
+    this.textareaTarget.removeEventListener("keydown", this.handleKeyPress.bind(this))
+  }
+
+  handleKeyPress(event) {
+    if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+      event.preventDefault()
+      this.formTarget.requestSubmit()
+    }
+  }
+} 

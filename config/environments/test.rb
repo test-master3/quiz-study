@@ -61,4 +61,9 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions
   config.action_controller.raise_on_missing_callback_actions = true
+
+  # app/javascriptをtestでも正しく読み込むために必要な設定
+  config.assets.compile = true
+  config.assets.debug = true
+
 end
