@@ -1,17 +1,46 @@
-<h2>ユーザー情報</h2>
+<div class="user-profile">
+  <h2>ユーザー情報</h2>
 
-<p><strong>メールアドレス：</strong><%= @user.email %></p>
-<p><strong>登録日時：</strong><%= @user.created_at.strftime("%Y年%m月%d日 %H:%M") %></p>
+  <div class="info-item">
+    <span class="info-label">メールアドレス：</span>
+    <%= @user.email %>
+  </div>
 
-<% if @user.line_linked? %>
-  <p><strong>LINE連携：</strong><span style="color: green;">連携済み</span></p>
-<% else %>
-  <p><strong>LINE連携：</strong><span style="color: red;">未連携</span></p>
-  <%= link_to "LINE連携をする", new_line_account_path, class: 'button' %>
-<% end %>
+  <div class="info-item">
+    <span class="info-label">登録日時：</span>
+    <%= l @user.created_at, format: :long %>
+  </div>
 
-<h3>これまでの質問数：</h3>
-<p><%= @user.questions.count %> 件</p>
+  <div class="info-item">
+    <span class="info-label">LINE連携：</span>
+    <% if @user.line_linked? %>
+      <span class="status status-connected">連携済み</span>
+    <% else %>
+      <span class="status status-disconnected">未連携</span>
+    <% end %>
+  </div>
 
-<%= link_to '質問一覧を見る', questions_path, class: 'button' %>
-<%= link_to '新しい質問をする', new_question_path, class: 'button' %>
+  <div class="info-item">
+    <h3>これまでの質問数</h3>
+    <p><%= @user.questions.count %> 件</p>
+  </div>
+
+  <div class="action-buttons">
+    <% unless @user.line_linked? %>
+      <%= link_to new_line_account_path, class: 'action-button line-button' do %>
+        <i class="fab fa-line"></i>
+        <span>LINE連携をする</span>
+      <% end %>
+    <% end %>
+
+    <%= link_to questions_path, class: 'action-button' do %>
+      <i class="fas fa-list"></i>
+      <span>質問一覧を見る</span>
+    <% end %>
+
+    <%= link_to new_question_path, class: 'action-button' do %>
+      <i class="fas fa-plus"></i>
+      <span>新しい質問をする</span>
+    <% end %>
+  </div>
+</div>

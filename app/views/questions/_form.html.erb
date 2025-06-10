@@ -1,11 +1,20 @@
 <%# 質問入力フォーム %>
 <div class="question-input-form">
   <%= form_with model: @question, url: questions_path, local: true do |f| %>
+    <% if @question.errors.any? %>
+      <div class="error-messages">
+        <ul>
+          <% @question.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
 
     <div class="question-form-radio-group">
       <span>クイズをLINEに送りますか？</span>
-      <label><input type="radio" name="send_to_line" value="yes"> YES</label>
-      <label><input type="radio" name="send_to_line" value="no" checked> NO</label>
+      <label><input type="radio" name="send_to_line" value="yes" id="send_to_line_yes"> YES</label>
+      <label><input type="radio" name="send_to_line" value="no" checked id="send_to_line_no"> NO</label>
     </div>
 
     <div id="question_form_container">
@@ -18,6 +27,5 @@
         <%= f.submit "送信", class: "submit-button" %>
       </div>
     </div>
-
   <% end %>
 </div>
