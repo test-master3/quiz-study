@@ -20,7 +20,5 @@ Rails.application.routes.draw do
 
   # 質問・回答・クイズ
   resources :questions, only: [:new, :create, :index, :show] do
-    resources :answers, only: [:create, :index]
-    resource  :quiz, only: [:show, :update]
   end
 end
