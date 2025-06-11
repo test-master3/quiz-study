@@ -5,7 +5,13 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_many :questions
+  has_many :quizzes
+  has_many :answers
 
   validates :line_uid, uniqueness: true, allow_nil: true
   
+  def line_linked?
+    line_uid.present?
+  end
+
 end
