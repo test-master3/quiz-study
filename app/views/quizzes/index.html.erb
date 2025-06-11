@@ -1,0 +1,32 @@
+<!-- app/views/quizzes/index.html.erb -->
+<div class="user-profile">
+  <h2>LINE送信クイズ管理</h2>
+
+  <%= form_with url: update_send_to_line_quizzes_path, method: :post, class: "quiz-form" do %>
+    <table class="quiz-table">
+      <thead>
+        <tr>
+          <th>クイズ内容</th>
+          <th>送信対象</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @quizzes.each do |quiz| %>
+          <tr>
+            <td><%= quiz.quiz_text %></td>
+            <td>
+              <%= check_box_tag "quiz_ids[]", quiz.id, quiz.send_to_line %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+  <div class="form-footer">
+    <%= submit_tag "更新する", class: "submit-button" %>
+    <%# <%= button_to "全てのクイズを送信対象から外す", reset_send_to_line_quizzes_path, method: :post, class: "submit-button" %>
+  </div>
+
+  <% end %>
+</div>

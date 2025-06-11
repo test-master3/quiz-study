@@ -38,6 +38,12 @@
       <span>質問一覧を見る</span>
     <% end %>
 
+    <!-- ✅ 新規追加（クイズ管理画面） -->
+    <%= link_to quizzes_path, class: 'action-button' do %>
+      <i class="fas fa-clipboard-list"></i>
+      <span>LINE送信クイズ管理</span>
+    <% end %>
+
     <%= link_to new_question_path, class: 'action-button' do %>
       <i class="fas fa-plus"></i>
       <span>新しい質問をする</span>
