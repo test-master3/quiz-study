@@ -98,7 +98,7 @@ end
     user: @question.user,
     question: @question,
     quiz_text: @question.quiz_question,
-    send_to_line: false
+    send_to_line: true
 
    )
 

@@ -525,3 +525,34 @@ hr {
 .action-button i {
   font-size: 1.1rem;
 } 
+
+.quiz-form {
+  margin-top: 2rem;
+}
+
+.quiz-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+.quiz-table th, .quiz-table td {
+  border: 1px solid #e0e0e0;
+  padding: 1rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.quiz-table th {
+  background-color: #f8f9fa;
+  color: #333;
+  font-weight: bold;
+}
+
+.quiz-table tr:nth-child(even) {
+  background-color: #fdfdfd;
+}
+
+.form-footer {
+  text-align: right;
+}

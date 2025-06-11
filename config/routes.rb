@@ -33,4 +33,12 @@ Rails.application.routes.draw do
   end
 
   resources :admin, only: [:new, :create]
+
+  resources :quizzes, only: [:index] do
+    collection do
+      post :update_send_to_line
+      post :reset_send_to_line
+    end
+  end
+
 end
