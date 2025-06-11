@@ -26,12 +26,11 @@ Rails.application.routes.draw do
   # GAS連携
   namespace :api do
     namespace :v1 do
-      get 'line_notifications/quiz_today'
-      get 'line/quiz_today', to: 'line_notifier#quiz_today'
+      namespace :line do
+        get 'quiz_today', to: 'notifier#quiz_today'
+      end
     end
   end
 
   resources :admin, only: [:new, :create]
-
-
 end
