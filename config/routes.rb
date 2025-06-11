@@ -32,6 +32,6 @@ Rails.application.routes.draw do
   end
 
   resources :admin, only: [:new, :create]
-  
+
 
 end
