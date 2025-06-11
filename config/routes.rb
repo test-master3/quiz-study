@@ -20,5 +20,6 @@ Rails.application.routes.draw do
 
   # 質問・回答・クイズ
   resources :questions, only: [:new, :create, :index, :show] do
+    post 'save_quiz_and_answer', on: :member
   end
 end

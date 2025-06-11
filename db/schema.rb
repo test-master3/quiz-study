@@ -10,14 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_05_19_071830) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_11_024929) do
   create_table "answers", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.text "content"
     t.boolean "from_gpt"
     t.bigint "question_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.bigint "quiz_id", null: false
     t.index ["question_id"], name: "index_answers_on_question_id"
+    t.index ["quiz_id"], name: "index_answers_on_quiz_id"
+    t.index ["user_id"], name: "index_answers_on_user_id"
   end
 
   create_table "questions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -39,7 +43,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_19_071830) do
     t.bigint "question_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["question_id"], name: "index_quizzes_on_question_id"
+    t.index ["user_id"], name: "index_quizzes_on_user_id"
   end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -57,6 +63,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_19_071830) do
   end
 
   add_foreign_key "answers", "questions"
+  add_foreign_key "answers", "quizzes"
+  add_foreign_key "answers", "users"
   add_foreign_key "questions", "users"
   add_foreign_key "quizzes", "questions"
+  add_foreign_key "quizzes", "users"
 end
