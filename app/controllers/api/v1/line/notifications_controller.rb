@@ -1,8 +1,9 @@
 module Api
   module V1
-    class NotificationsController < ApplicationController
-      protect_from_forgery with: :null_session
-      before_action :check_api_key
+    module Line
+      class NotificationsController < ApplicationController
+        protect_from_forgery with: :null_session
+        before_action :check_api_key
 
       def quiz_today
         quizzes = Quiz.where(send_to_line: true).includes(:user)
