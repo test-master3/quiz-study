@@ -20,5 +20,18 @@ Rails.application.routes.draw do
 
   # 質問・回答・クイズ
   resources :questions, only: [:new, :create, :index, :show] do
+    post 'save_quiz_and_answer', on: :member
   end
+
+  # GAS連携
+  namespace :api do
+    namespace :v1 do
+      get 'line_notifications/quiz_today'
+      get 'line/quiz_today', to: 'line_notifier#quiz_today'
+    end
+  end
+
+  resources :admin, only: [:new, :create]
+
+
 end

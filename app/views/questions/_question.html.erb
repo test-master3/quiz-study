@@ -42,6 +42,13 @@
     </div>
   <% end %>
 
+  <%# AIの出力があるときだけ保存ボタンを表示 %>
+  <% if question.quiz_question.present? && question.answer_text.present? %>
+    <div class="save-section">
+      <%= button_to "このクイズと回答を保存する", save_quiz_and_answer_question_path(question), method: :post, class: "save-button" %>
+   </div>
+  <% end %>
+
   <div class="question-meta">
     <div class="meta-info">
       <span class="post-date">投稿日時：<%= l(question.created_at, format: :long) %></span>
@@ -62,6 +69,5 @@
       <% end %>
     </div>
   </div>
-
   <hr>
 </div>

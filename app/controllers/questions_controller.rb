@@ -1,7 +1,7 @@
 # app/controllers/questions_controller.rb
 class QuestionsController < ApplicationController
   before_action :authenticate_user!, except: [:new]
-  before_action :set_question, only: %i[show]
+  before_action :set_question, only: [:show, :save_quiz_and_answer]
 
   def index
     @questions = Question.order(created_at: :desc)
@@ -92,7 +92,26 @@ def create
   end
 end
   
+  def save_quiz_and_answer
+  # Quiz保存
+  quiz = Quiz.create!(
+    user: @question.user,
+    question: @question,
+    quiz_text: @question.quiz_question,
+    send_to_line: false
 
+   )
+
+  # Answer保存
+  Answer.create!(
+    user: @question.user,
+    quiz: quiz,
+    question_id: @question.id,
+    content: @question.answer_text,
+  )
+
+  redirect_to questions_path, notice: "クイズと回答を保存しました！"
+end
 
   private
 

@@ -1,0 +1,20 @@
+<!-- app/views/admin/new.html.erb -->
+<h1>line_uid 登録ページ（管理者用）</h1>
+
+<%= form_with url: "/admin", method: :post do %>
+  <div>
+    <label>ユーザーID</label>
+    <%= text_field_tag :user_id %>
+  </div>
+
+  <div>
+    <label>line_uid</label>
+    <%= text_field_tag :line_uid %>
+  </div>
+
+  <%= submit_tag "登録" %>
+<% end %>
+
+<% if flash[:notice] %>
+  <p><%= flash[:notice] %></p>
+<% end %>
