@@ -56,8 +56,9 @@ class QuestionsController < ApplicationController
       user: @question.user,
       question: @question,
       quiz_text: @question.quiz_question,
+      quiz_choices: @question.quiz_choices,
+      quiz_link: "https://quiz-study-ibeu.onrender.com/questions/#{@question.id}",
       send_to_line: true
-
      )
 
     # Answer保存
