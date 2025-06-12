@@ -127,13 +127,21 @@ private
 
   # Gemini APIを呼び出すメソッド（完成版）
   def fetch_quiz_and_answer(prompt)
-    # サービスアカウントJSONのパスなど、クライアントを作成
-    keyfile_path = Rails.root.join("config/credentials/vertex-key.json")
-    # ※ もしinitializersに移動させていたら、この部分は不要かもしれません
+    # ▼▼▼ ここから修正 ▼▼▼
+    keyfile_io = if ENV['VERTEX_CREDENTIALS_JSON']
+                   # 本番環境 (Render) では環境変数から読み込む
+                   StringIO.new(ENV['VERTEX_CREDENTIALS_JSON'])
+                 else
+                   # 開発環境ではファイルから読み込む
+                   keyfile_path = Rails.root.join("config/credentials/vertex-key.json")
+                   File.open(keyfile_path)
+                 end
+
     credentials = Google::Auth::ServiceAccountCredentials.make_creds(
-      json_key_io: File.open(keyfile_path),
+      json_key_io: keyfile_io,
       scope: "https://www.googleapis.com/auth/cloud-platform"
     )
+    
     client = Google::Cloud::AIPlatform::V1::PredictionService::Client.new do |config|
       config.credentials = credentials
       config.endpoint = "asia-northeast1-aiplatform.googleapis.com"
