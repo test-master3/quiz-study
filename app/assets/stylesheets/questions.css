@@ -70,8 +70,8 @@
 
 /* メインコンテンツ */
 .main-content {
-  margin-left: 200px;
-  width: calc(100% - 200px);
+  margin-left: 150px;
+  width: calc(100% - 150px);
   min-height: 100vh;
   padding: 1rem;
 }
