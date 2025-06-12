@@ -1,73 +1,99 @@
 <%# app/views/questions/_question.html.erb %>
-<div id="<%= dom_id(question) %>" class="question-answer-container">
-  <div class="question-section">
-    <div class="question-header">
-      <h3>質問</h3>
-      <% if user_signed_in? && current_user == question.user %>
-        <span class="user-badge">あなたの質問</span>
-      <% end %>
-    </div>
-    <div class="content-area">
-      <%= Rinku.auto_link(simple_format(h(question.content)), :all, 'target="_blank" rel="noopener noreferrer"').html_safe %>
-    </div>
-  </div>
+<div id="<%= dom_id(question) %>" class="card mb-4 shadow-sm">
+  <div class="card-body">
+    <div class="row">
+      
+      <%# --- 左半分 (質問と回答) --- %>
+      <div class="col-md-6">
+        <%# --- 質問セクション --- %>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-question-circle text-primary me-2"></i>質問
+          </h5>
+          <% if user_signed_in? && current_user == question.user %>
+            <span class="badge bg-primary">あなたの質問</span>
+          <% end %>
+        </div>
+        <div class="card-text mb-4">
+          <%= Rinku.auto_link(simple_format(h(question.content)), :all, 'target="_blank" rel="noopener noreferrer"').html_safe %>
+        </div>
 
-  <div class="answer-section">
-    <h3>AIの回答 (Gemini)</h3>
-    <div class="content-area">
-      <% if question.answer_text.present? %>
-        <%= Rinku.auto_link(simple_format(h(question.answer_text)), :all, 'target="_blank" rel="noopener noreferrer"').html_safe %>
-      <% else %>
-        <p>まだ回答がありません。</p>
-      <% end %>
-    </div>
-  </div>
-
-  <% if question.quiz_question.present? %>
-    <div class="quiz-section">
-      <h3>クイズ</h3>
-      <div class="content-area">
-        <%= h(question.quiz_question) %>
+        <%# --- 回答セクション --- %>
+        <% if question.answer_text.present? %>
+          <h5 class="card-title">
+            <i class="fas fa-robot text-success me-2"></i>AIの回答 (Gemini)
+          </h5>
+          <div class="card-text p-3 bg-light rounded" style="line-height: 1.8;">
+            <%= Rinku.auto_link(simple_format(h(question.answer_text)), :all, 'target="_blank" rel="noopener noreferrer"').html_safe %>
+          </div>
+        <% end %>
       </div>
 
-      <h4>選択肢</h4>
-      <div class="quiz-choices">
-        <%= h(question.quiz_choices) %>
-      </div>
+      <%# --- 右半分 (クイズ) --- %>
+      <div class="col-md-6 border-start ps-4">
+        <%# --- 例え話セクション --- %>
+        <% if question.analogy_text.present? %>
+          <div class="mb-4">
+            <h5 class="card-title">
+              <i class="fas fa-lightbulb text-warning me-2"></i>例えるなら...
+            </h5>
+            <div class="card-text p-3 bg-white rounded border">
+              <%= simple_format(h(question.analogy_text)) %>
+            </div>
+          </div>
+        <% end %>
 
-      <h4 class="correct-answer">正解</h4>
-      <div class="content-area">
-        <%= h(question.quiz_answer) %>
-      </div>
-    </div>
-  <% end %>
-
-  <%# AIの出力があるときだけ保存ボタンを表示 %>
-  <% if question.quiz_question.present? && question.answer_text.present? %>
-    <div class="save-section">
-      <%= button_to "このクイズと回答を保存する", save_quiz_and_answer_question_path(question), method: :post, class: "save-button" %>
-   </div>
-  <% end %>
-
-  <div class="question-meta">
-    <div class="meta-info">
-      <span class="post-date"><%= time_ago_in_words(question.created_at) %>前</span>
-      <% if user_signed_in? && current_user == question.user %>
-        <span class="action-links">
-          <%= link_to edit_question_path(question), class: 'button-small' do %>
-            <i class="fas fa-edit"></i>
-            <span>編集</span>
-          <% end if defined?(edit_question_path) %>
+        <%# --- クイズセクション --- %>
+        <% if question.quiz_question.present? %>
+          <h5 class="card-title">
+            <i class="fas fa-puzzle-piece text-info me-2"></i>クイズ
+          </h5>
+          <div class="card-text fw-bold">
+            <%= simple_format(h(question.quiz_question)) %>
+          </div>
           
+          <h6>選択肢</h6>
+          <div class="quiz-choices mb-3">
+            <% question.quiz_choices.split("\n").each do |choice| %>
+              <p class="ms-3 mb-1"><%= h(choice) %></p>
+            <% end %>
+          </div>
+
+          <h6>正解</h6>
+          <p class="card-text fw-bold text-danger ms-3"><%= h(question.quiz_answer) %></p>
+        <% else %>
+          <div class="text-center text-muted p-5">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p class="mt-2">クイズを生成中です...</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <%# --- フッター (メタ情報とアクション) --- %>
+  <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+    <small class="text-muted"><%= time_ago_in_words(question.created_at) %>前</small>
+    
+    <div class="action-links">
+      <% if question.quiz_question.present? && question.answer_text.present? %>
+        <%= button_to "このクイズと回答を保存する", save_quiz_and_answer_question_path(question), method: :post, class: "btn btn-outline-secondary btn-sm" %>
+      <% end %>
+
+      <% if user_signed_in? && current_user == question.user %>
+        <% if defined?(edit_question_path) %>
+          <%= link_to edit_question_path(question), class: 'btn btn-outline-secondary btn-sm' do %>
+            <i class="fas fa-edit"></i>
+          <% end %>
+        <% end %>
+        <% if defined?(question_path) %>
           <%= link_to question_path(question),
               data: { turbo_method: :delete, turbo_confirm: '本当に削除しますか？' },
-              class: 'button-small button-danger' do %>
+              class: 'btn btn-outline-danger btn-sm' do %>
             <i class="fas fa-trash-alt"></i>
-            <span>削除</span>
-          <% end if defined?(question_path) %>
-        </span>
+          <% end %>
+        <% end %>
       <% end %>
     </div>
   </div>
-  <hr>
 </div>
