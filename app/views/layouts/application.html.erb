@@ -27,19 +27,54 @@
     </header>
     <!-- ▲ ヘッダーここまで -->
 
-    <% if notice || alert %>
-      <div class="container-fluid mt-2">
-        <% if notice %>
-          <p class="alert alert-success mb-0"><%= notice %></p>
-        <% end %>
-        <% if alert %>
-          <p class="alert alert-danger mb-0"><%= alert %></p>
-        <% end %>
-      </div>
-    <% end %>
-
     <main class="flex-grow-1" style="overflow-y: hidden;">
-      <%= yield %>
+      <div class="container-fluid h-100">
+        <div class="row h-100 flex-nowrap">
+          <%# --- Sidebar --- %>
+          <div class="sidebar-hover-container bg-light border-end p-3">
+            <% if user_signed_in? %>
+              <div class="list-group list-group-flush">
+                <%= link_to user_path(current_user), class: 'list-group-item list-group-item-action bg-transparent p-3' do %>
+                  <i class="fas fa-user fa-fw me-3"></i><span class="sidebar-text">マイページ</span>
+                <% end %>
+                <%= link_to new_line_account_path, class: 'list-group-item list-group-item-action bg-transparent p-3' do %>
+                  <i class="fab fa-line fa-fw me-3"></i><span class="sidebar-text">LINE連携</span>
+                <% end %>
+              </div>
+              <hr>
+              <%= link_to destroy_user_session_path, 
+                  data: { turbo_method: :delete, turbo_confirm: 'ログアウトしますか？' }, 
+                  class: 'list-group-item list-group-item-action bg-transparent text-danger p-3' do %>
+                <i class="fas fa-sign-out-alt fa-fw me-3"></i><span class="sidebar-text">ログアウト</span>
+              <% end %>
+            <% else %>
+              <div class="list-group list-group-flush">
+                <%= link_to new_user_registration_path, class: 'list-group-item list-group-item-action bg-transparent p-3' do %>
+                  <i class="fas fa-user-plus fa-fw me-3"></i><span class="sidebar-text">新規登録</span>
+                <% end %>
+                <%= link_to new_user_session_path, class: 'list-group-item list-group-item-action bg-transparent p-3' do %>
+                  <i class="fas fa-sign-in-alt fa-fw me-3"></i><span class="sidebar-text">ログイン</span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+
+          <%# --- メインコンテンツエリア --- %>
+          <div class="col p-0 d-flex flex-column h-100">
+            <% if notice || alert %>
+              <div class="container-fluid mt-2">
+                <% if notice %>
+                  <p class="alert alert-success mb-0"><%= notice %></p>
+                <% end %>
+                <% if alert %>
+                  <p class="alert alert-danger mb-0"><%= alert %></p>
+                <% end %>
+              </div>
+            <% end %>
+            <%= yield %>
+          </div>
+        </div>
+      </div>
     </main>
   </body>
 </html>

@@ -59,6 +59,15 @@ body {
   color: var(--color-surface);
 }
 
+.btn-subtle-primary {
+  background-color: rgba(247, 184, 75, 0.2); /* var(--color-primary) with opacity */
+  border-color: transparent;
+  color: var(--color-text);
+}
+.btn-subtle-primary:hover {
+  background-color: rgba(247, 184, 75, 0.4);
+}
+
 .btn-outline-danger {
     color: #D32F2F;
     border-color: #D32F2F;
