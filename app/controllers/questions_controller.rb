@@ -20,193 +20,181 @@ class QuestionsController < ApplicationController
     end
   end
 
-# app/controllers/questions_controller.rb
-# app/controllers/questions_controller.rb の create アクション (一部抜粋)
-# (現在の questions_controller_rb_v2 のままで基本的にはOKのはずです)
-# def create
-#   @question = current_user.questions.build(question_params)
+  def create
+    @question = current_user.questions.build(question_params)
 
-#   if @question.save
-#     quiz_data = fetch_quiz_and_answer(@question.content)
+    if @question.save
+      # Geminiから回答とクイズを取得
+      result = fetch_quiz_and_answer(@question)
 
-#     if quiz_data.is_a?(Hash)
-#       @question.update(
-#         answer_text: quiz_data[:answer_text],
-#         quiz_question: quiz_data[:quiz_question],
-#         quiz_choices: quiz_data[:quiz_choices],
-#         quiz_answer: quiz_data[:quiz_answer]
-#       )
+      if result.is_a?(Hash) && result[:answer_text].exclude?("エラー")
+        @question.update(
+          answer_text: result[:answer_text],
+          analogy_text: result[:analogy_text],
+          quiz_question: result[:quiz_question],
+          quiz_choices: result[:quiz_choices],
+          quiz_answer: result[:quiz_answer]
+        )
+      else
+        # エラーメッセージをflashに格納し、questionは保存されているのでエラーとはしない
+        flash[:alert] = "回答の生成に失敗しました。時間をおいて再度お試しください。"
+        # resultがHashでなかった場合や、エラー文字列を含む場合のログ出力
+        Rails.logger.error "回答生成エラー: #{result}"
+      end
 
-#       respond_to do |format|
-#         format.turbo_stream
-#         format.html { redirect_to @question, notice: '質問を送信し、回答とクイズを生成しました！' }
-#       end
-#     else
-#       # Gemini APIでエラーが返ってきた場合（文字列で返ってくる）
-#       flash.now[:alert] = "回答とクイズの生成中にエラーが発生しました。#{quiz_data}"
-#       @questions = Question.order(created_at: :desc)
-#       respond_to do |format|
-#         format.turbo_stream {
-#           render turbo_stream: turbo_stream.replace("question_form_container",
-#             partial: "questions/form", locals: { question: @question })
-#         }
-#         format.html { render :new, status: :unprocessable_entity }
-#       end
-#     end
-#   else
-#     # バリデーションエラー
-#     @questions = Question.order(created_at: :desc)
-#     respond_to do |format|
-#       format.turbo_stream {
-#         render turbo_stream: turbo_stream.replace("question_form_container",
-#           partial: "questions/form", locals: { question: @question })
-#       }
-#       format.html { render :new, status: :unprocessable_entity }
-#     end
-#   end
-# end
+      redirect_to new_question_path, notice: "質問が投稿されました！"
 
-def create
-  @question = current_user.questions.build(question_params)
-  if @question.save
-    # Geminiから回答とクイズを取得（クイズ機能を入れている場合はこちら）
-    result = fetch_quiz_and_answer(@question.content)
-
-    if result.is_a?(Hash)
-      @question.update(
-        answer_text: result[:answer_text],
-        quiz_question: result[:quiz_question],
-        quiz_choices: result[:quiz_choices],
-        quiz_answer: result[:quiz_answer]
-      )
     else
-      flash[:alert] = "回答生成エラー: #{result}"
+      @questions = current_user.questions.order(created_at: :desc)
+      render :new, status: :unprocessable_entity
     end
-
-    # 🚨 リダイレクトで `/questions`（トップページ）に戻す
-    redirect_to new_question_path, notice: "質問が投稿されました！"
-
-  else
-    @questions = Question.order(created_at: :desc)
-    render :new, status: :unprocessable_entity
   end
-end
-  
+
   def save_quiz_and_answer
-  # Quiz保存
-  quiz = Quiz.create!(
-    user: @question.user,
-    question: @question,
-    quiz_text: @question.quiz_question,
-    send_to_line: true
+    # Quiz保存
+    quiz = Quiz.create!(
+      user: @question.user,
+      question: @question,
+      quiz_text: @question.quiz_question,
+      send_to_line: true
 
-   )
+     )
 
-  # Answer保存
-  Answer.create!(
-    user: @question.user,
-    quiz: quiz,
-    question_id: @question.id,
-    content: @question.answer_text,
-  )
-
-  redirect_to questions_path, notice: "クイズと回答を保存しました！"
-end
-
-private
-
-  # idを元に@questionを設定する共通メソッド
-  def set_question
-    @question = Question.find(params[:id])
-  end
-
-  # フォームから安全なデータだけを受け取るための「門番」メソッド
-  def question_params
-    params.require(:question).permit(:content)
-  end
-
-  # Gemini APIを呼び出すメソッド（完成版）
-  def fetch_quiz_and_answer(prompt)
-    # ▼▼▼ ここから修正 ▼▼▼
-    keyfile_io = if ENV['VERTEX_CREDENTIALS_JSON']
-                   # 本番環境 (Render) では環境変数から読み込む
-                   StringIO.new(ENV['VERTEX_CREDENTIALS_JSON'])
-                 else
-                   # 開発環境ではファイルから読み込む
-                   keyfile_path = Rails.root.join("config/credentials/vertex-key.json")
-                   File.open(keyfile_path)
-                 end
-
-    credentials = Google::Auth::ServiceAccountCredentials.make_creds(
-      json_key_io: keyfile_io,
-      scope: "https://www.googleapis.com/auth/cloud-platform"
+    # Answer保存
+    Answer.create!(
+      user: @question.user,
+      quiz: quiz,
+      question_id: @question.id,
+      content: @question.answer_text,
     )
-    
-    client = Google::Cloud::AIPlatform::V1::PredictionService::Client.new do |config|
-      config.credentials = credentials
-      config.endpoint = "asia-northeast1-aiplatform.googleapis.com"
-    end
 
-    # AIに送るプロンプトを作成
-    full_prompt = <<~PROMPT
-      次の説明文に基づいて、1. 回答（100文字以上） 2. 三択クイズ を日本語で生成してください。
-  
-      【説明文】
-      #{prompt}
-  
-      【出力フォーマット】
-      回答: 〇〇〇
-      クイズ: 〇〇〇は何ですか？
-      選択肢:
-      1. 〇〇
-      2. 〇〇
-      3. 〇〇
-      正解: 1
-    PROMPT
-  
-    # APIに送るリクエストを作成
-    project_id = ENV["VERTEX_PROJECT_ID"] # 新しいプロジェクトIDが設定されているか確認
-    location = "asia-northeast1"
-    model = "gemini-1.5-flash-002" # 正しいモデル名
-    model_name = "projects/#{project_id}/locations/#{location}/publishers/google/models/#{model}"
-    
-    request = {
-      model: model_name,
-      contents: [{ role: "user", parts: [{ text: full_prompt }] }],
-      tools: [{ google_search_retrieval: {} }]
-    }
-
-    # APIを呼び出し、生の回答を取得
-    response = client.generate_content(request)
-    text = response.candidates.first.content.parts.first.text
-    Rails.logger.info "==== RAW GEMINI RESPONSE START ====\n#{text}\n==== RAW GEMINI RESPONSE END ===="
-    return { answer_text: "エラー：Geminiからの応答がありませんでした。", quiz_question: "", quiz_choices: "", quiz_answer: "" } unless text.present?
-
-    # パース処理
-    begin
-      answer_match = text.match(/回答:(.*?)クイズ:/m)
-      quiz_match = text.match(/クイズ:(.*?)選択肢:/m)
-      choices_match = text.match(/選択肢:(.*?)正解:/m)
-      correct_match = text.match(/正解:(.*)/)
-
-      raise "Required part of the response was not found." unless answer_match && quiz_match && choices_match && correct_match
-      
-      # パース成功時
-      {
-        answer_text: answer_match[1].strip,
-        quiz_question: quiz_match[1].strip,
-        quiz_choices: choices_match[1].strip,
-        quiz_answer: correct_match[1].strip
-      }
-    rescue => e
-      # パース失敗時（フォールバック）
-      Rails.logger.error "Could not parse Gemini response. Falling back to raw text. Error: #{e.message}"
-      {
-        answer_text: text,
-        quiz_question: "（クイズの分解に失敗しました）",
-        quiz_choices: "",
-        quiz_answer: ""
-      }
-    end
+    redirect_to questions_path, notice: "クイズと回答を保存しました！"
   end
+
+  private
+
+    # idを元に@questionを設定する共通メソッド
+    def set_question
+      @question = Question.find(params[:id])
+    end
+
+    # フォームから安全なデータだけを受け取るための「門番」メソッド
+    def question_params
+      params.require(:question).permit(:content, :abstraction_level, :analogy_genre)
+    end
+
+    # Gemini APIを呼び出すメソッド（完成版）
+    def fetch_quiz_and_answer(question)
+      # ▼▼▼ ここから修正 ▼▼▼
+      keyfile_io = if ENV['VERTEX_CREDENTIALS_JSON']
+                     # 本番環境 (Render) では環境変数から読み込む
+                     StringIO.new(ENV['VERTEX_CREDENTIALS_JSON'])
+                   else
+                     # 開発環境ではファイルから読み込む
+                     keyfile_path = Rails.root.join("config/credentials/vertex-key.json")
+                     return { answer_text: "開発環境のエラー：vertex-key.json が見つかりません。" } unless File.exist?(keyfile_path)
+                     File.open(keyfile_path)
+                   end
+
+      begin
+        credentials = Google::Auth::ServiceAccountCredentials.make_creds(
+          json_key_io: keyfile_io,
+          scope: "https://www.googleapis.com/auth/cloud-platform"
+        )
+        
+        client = Google::Cloud::AIPlatform::V1::PredictionService::Client.new do |config|
+          config.credentials = credentials
+          config.endpoint = "asia-northeast1-aiplatform.googleapis.com"
+        end
+
+        # AIに送るプロンプトを動的に組み立てる
+        full_prompt = <<~PROMPT
+        次の説明文に基づいて、以下の3点を日本語で生成してください。
+        各項目は、指示されたフォーマットを厳密に守ってください。
+
+        【説明文】
+        #{question.content}
+
+        【出力フォーマット】
+        回答: 
+        [以下の「回答のフォーマット」を厳密に守って、全体で200文字以内になるように、回答を生成してください。]
+        # 回答のフォーマット
+        ◎ [回答のトピックを一言で表すタイトル]
+        [トピックについての簡単な紹介文を、平易な言葉で記述]
+
+        ◎ [トピックの重要性や理由を問うような小見出し（例：なぜ〇〇は重要ですか？）]
+        [上記の小見出しに対する詳しい説明。箇条書きなどを用いて分かりやすく]
+
+        ◎ [具体的なポイントやコツなどをまとめた小見出し（例：〇〇のポイント）]
+        ・**ポイント1**: [説明]
+        ・**ポイント2**: [説明]
+        ・**ポイント3**: [説明]
+        [全体をまとめる、フレンドリーな締めくくりの文章]
+
+        例え話: 
+        [以下の「例え話のフォーマット」と「例え話の条件」を厳密に守って、例え話を生成してください。]
+        # 例え話のフォーマット
+        ◎テーマ：[例え話のテーマを記述]
+        [テーマ]は、[身近なもの]のようなものです。
+        例えば
+        ・[具体的な例1]
+        ・[具体的な例2]
+        [テーマ]は、[要約や補足]です。
+        # 例え話の条件
+        ・対象読者: #{question.abstraction_level || '中学生向け'}
+        ・ジャンル: #{question.analogy_genre.present? && question.analogy_genre != '指定なし' ? question.analogy_genre : '指定なし'}
+        ・文字数: 100文字程度
+
+        クイズ: 
+        ◎キーワードクイズ
+        [生成した「回答」の内容から、重要なキーワードを問うクイズの問題文をここに記述]
+        選択肢:
+        1. [20文字以内の選択肢1]
+        2. [20文字以内の選択肢2]
+        3. [20文字以内の選択肢3]
+        正解: [正解の番号]
+      PROMPT
+    
+        # APIに送るリクエストを作成
+        project_id = ENV["VERTEX_PROJECT_ID"]
+        raise "VERTEX_PROJECT_IDが設定されていません。" unless project_id.present?
+        location = "asia-northeast1"
+        model = "gemini-1.5-flash-002" # 正しいモデル名
+        model_name = "projects/#{project_id}/locations/#{location}/publishers/google/models/#{model}"
+        
+        request = {
+          model: model_name,
+          contents: [{ role: "user", parts: [{ text: full_prompt }] }],
+          tools: [{ google_search_retrieval: {} }]
+        }
+
+        # APIを呼び出し、生の回答を取得
+        response = client.generate_content(request)
+        text = response.candidates.first&.content&.parts&.first&.text
+        Rails.logger.info "==== RAW GEMINI RESPONSE START ====\n#{text}\n==== RAW GEMINI RESPONSE END ===="
+        return { answer_text: "エラー：Geminiからの応答がありませんでした。" } unless text.present?
+
+        # パース処理
+        answer_match = text.match(/回答:(.*?)例え話:/m)
+        analogy_match = text.match(/例え話:(.*?)クイズ:/m)
+        quiz_match = text.match(/クイズ:(.*?)選択肢:/m)
+        choices_match = text.match(/選択肢:(.*?)正解:/m)
+        correct_match = text.match(/正解:(.*)/)
+
+        raise "Required part of the response was not found." unless answer_match && analogy_match && quiz_match && choices_match && correct_match
+        
+        # パース成功時
+        {
+          answer_text: answer_match[1].strip,
+          analogy_text: analogy_match[1].strip,
+          quiz_question: quiz_match[1].strip,
+          quiz_choices: choices_match[1].strip,
+          quiz_answer: correct_match[1].strip
+        }
+      rescue => e
+        # パース失敗時（フォールバック）
+        Rails.logger.error "Gemini API call or parsing failed: #{e.message}"
+        { answer_text: "エラー：AIとの通信中に問題が発生しました。#{e.class}" }
+      end
+    end
 end

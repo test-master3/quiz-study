@@ -7,28 +7,39 @@
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "custom", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   </head>
 
-  <body>
+  <body class="d-flex flex-column vh-100">
     <!-- ▼ ここからヘッダー部分 -->
-    <header style="padding: 10px; background-color: #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
-      <%= link_to '🏠 トップページに戻る', root_path, style: "font-weight: bold; color: #3366cc; text-decoration: none;" %>
+    <header class="p-2 bg-light border-bottom">
+      <div class="container-fluid d-flex justify-content-between align-items-center">
+        <%= link_to '🏠 トップページに戻る', root_path, class: "fw-bold text-decoration-none" %>
 
-      <% if user_signed_in? %>
-        <p style="margin: 0;">ログイン中：<%= current_user.email %></p>
-      <% else %>
-        <p style="margin: 0;">ログインしていません</p>
-      <% end %>
+        <% if user_signed_in? %>
+          <p class="mb-0 small">ログイン中：<%= current_user.email %></p>
+        <% else %>
+          <p class="mb-0 small">ログインしていません</p>
+        <% end %>
+      </div>
     </header>
     <!-- ▲ ヘッダーここまで -->
-  <% if notice %>
-    <p class="alert alert-success"><%= notice %></p>
-  <% end %>
-  <% if alert %>
-    <p class="alert alert-danger"><%= alert %></p>
-  <% end %>
-    <%= yield %>
+
+    <% if notice || alert %>
+      <div class="container-fluid mt-2">
+        <% if notice %>
+          <p class="alert alert-success mb-0"><%= notice %></p>
+        <% end %>
+        <% if alert %>
+          <p class="alert alert-danger mb-0"><%= alert %></p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <main class="flex-grow-1" style="overflow-y: hidden;">
+      <%= yield %>
+    </main>
   </body>
 </html>

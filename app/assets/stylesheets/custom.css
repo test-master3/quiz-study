@@ -1,0 +1,125 @@
+:root {
+  --color-bg: #FDFCF8;
+  --color-surface: #FFFFFF;
+  --color-primary: #F7B84B; /* Mustard Yellow */
+  --color-secondary: #A99985; /* Muted Brown */
+  --color-text: #4E443A; /* Dark Brown */
+  --color-border: #E0DACE;
+  
+  --color-bg-dark: #4E443A;
+  --color-text-on-dark: #FFFFFF; /* 明確に白を指定 */
+
+  --font-family-sans-serif: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-family-sans-serif);
+}
+
+/* --- Layout --- */
+.bg-light {
+  background-color: var(--color-surface) !important;
+}
+.border-top, .border-bottom, .border-start, .border-end, .border {
+  border-color: var(--color-border) !important;
+}
+
+/* --- Cards --- */
+.card {
+  border: 1px solid var(--color-border);
+  border-radius: 12px; /* モダンな角丸 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+.card-footer {
+  background-color: transparent;
+  border-top: 1px solid var(--color-border);
+}
+
+/* --- Buttons & Links --- */
+.btn-primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text);
+  font-weight: bold;
+}
+.btn-primary:hover {
+  background-color: #e0a644; /* 黄色を少し暗く */
+  border-color: #e0a644;
+  color: var(--color-text);
+}
+
+.btn-outline-secondary {
+  color: var(--color-secondary);
+  border-color: var(--color-secondary);
+}
+.btn-outline-secondary:hover {
+  background-color: var(--color-secondary);
+  color: var(--color-surface);
+}
+
+.btn-outline-danger {
+    color: #D32F2F;
+    border-color: #D32F2F;
+}
+.btn-outline-danger:hover {
+    background-color: #D32F2F;
+    color: var(--color-surface);
+}
+
+
+/* --- Icons & Badges --- */
+.text-primary { color: var(--color-primary) !important; }
+.text-success { color: #5D9C59 !important; } /* 落ち着いた緑 */
+.text-warning { color: #DD761C !important; } /* 落ち着いたオレンジ */
+.text-info { color: #607D8B !important; } /* 落ち着いた青灰色 */
+.text-danger { color: #D32F2F !important; } /* 落ち着いた赤 */
+
+.badge.bg-primary {
+  background-color: var(--color-primary) !important;
+  color: var(--color-text) !important;
+}
+
+/* --- Sidebar --- */
+.sidebar-hover-container {
+  transition: width 0.2s ease-in-out;
+  width: 80px;
+  overflow: hidden;
+  white-space: nowrap;
+  background-color: var(--color-bg-dark) !important;
+  border-color: var(--color-border) !important;
+}
+.sidebar-hover-container a, 
+.sidebar-hover-container i {
+  color: var(--color-text-on-dark);
+}
+
+.sidebar-hover-container a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-hover-container:hover {
+  width: 250px;
+}
+.sidebar-hover-container .sidebar-text {
+  transition: opacity 0.2s ease-in-out;
+  opacity: 0;
+}
+.sidebar-hover-container:hover .sidebar-text {
+  opacity: 1;
+}
+
+/* --- Header & Form Area --- */
+header.p-2, .p-3.bg-light.border-top {
+  background-color: var(--color-bg-dark) !important;
+  color: var(--color-text-on-dark);
+}
+header.p-2 a, header.p-2 .small {
+  color: var(--color-text-on-dark);
+}
+
+/* --- Specific overrides from _question.html.erb --- */
+.p-3.bg-light.rounded {
+    background-color: var(--color-bg) !important; /* AIの回答欄の背景 */
+} 

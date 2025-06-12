@@ -34,6 +34,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_11_024929) do
     t.text "quiz_question"
     t.text "quiz_choices"
     t.string "quiz_answer"
+    t.text "analogy_text"
+    t.string "abstraction_level"
+    t.string "analogy_genre"
     t.index ["user_id"], name: "index_questions_on_user_id"
   end
 

@@ -1,25 +1,55 @@
 <%# 質問入力フォーム %>
-<div class="question-input-form">
-  <%= form_with model: @question, url: questions_path, local: true do |f| %>
-    <% if @question.errors.any? %>
-      <div class="error-messages">
-        <ul>
-          <% @question.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-          <% end %>
-        </ul>
-      </div>
-    <% end %>
+<%= form_with model: @question, url: questions_path, data: { controller: "form-submit" } do |f| %>
 
-    <div id="question_form_container">
-      <%= f.text_area :content,
-        id: "question_content",
-        class: "question-textarea",
-        placeholder: "ここに質問を入力してください" %>
-
-      <div class="question-form-footer">
-        <%= f.submit "送信", class: "submit-button" %>
-      </div>
+  <%# --- エラーメッセージ表示 --- %>
+  <% if @question.errors.any? %>
+    <div class="alert alert-danger">
+      <ul class="mb-0">
+        <% @question.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
     </div>
   <% end %>
-</div>
+
+  <%# --- オプション選択 --- %>
+  <div class="row g-2 mb-3">
+    <div class="col-md">
+      <div class="form-floating">
+        <%= f.select :abstraction_level, 
+          options_for_select([
+            ['中学生向け', '中学生向け'], 
+            ['小学生向け', '小学生向け'], 
+            ['高校生向け', '高校生向け'], 
+            ['大学生・社会人向け', '大学生・社会人向け']
+          ]), 
+          {}, 
+          class: 'form-select' %>
+        <%= f.label :abstraction_level, "例え話の対象" %>
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="form-floating">
+        <%= f.select :analogy_genre, 
+          options_for_select([
+            '指定なし', 'スポーツ', '料理', '家事', 'IT・プログラミング', 'ビジネス'
+          ]), 
+          {}, 
+          class: 'form-select' %>
+        <%= f.label :analogy_genre, "例え話のジャンル" %>
+      </div>
+    </div>
+  </div>
+
+  <%# --- 入力フォーム本体 --- %>
+  <div class="input-group">
+    <%= f.text_area :content,
+      class: "form-control",
+      rows: 3,
+      placeholder: "AIに聞きたいことを入力してください...",
+      data: { action: "keydown->form-submit#onKeyPress" } %>
+    
+    <%= f.submit "送信", class: "btn btn-primary" %>
+  </div>
+
+<% end %>
