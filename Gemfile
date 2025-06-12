@@ -85,3 +85,5 @@ gem 'rinku'
 
 gem 'rails-i18n'
 
+gem 'google-cloud-ai_platform'
+gem 'googleauth'

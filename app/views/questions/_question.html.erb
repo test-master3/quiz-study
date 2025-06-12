@@ -51,7 +51,7 @@
 
   <div class="question-meta">
     <div class="meta-info">
-      <span class="post-date">投稿日時：<%= l(question.created_at, format: :long) %></span>
+      <span class="post-date"><%= time_ago_in_words(question.created_at) %>前</span>
       <% if user_signed_in? && current_user == question.user %>
         <span class="action-links">
           <%= link_to edit_question_path(question), class: 'button-small' do %>
