@@ -4,4 +4,5 @@
 //= link popper.js
 //= link bootstrap.min.js
 //= link sidebar.css
+//= link custom.css
 //= link_tree ../builds

@@ -59,8 +59,15 @@
             <% end %>
           </div>
 
-          <h6>正解</h6>
-          <p class="card-text fw-bold text-danger ms-3"><%= h(question.quiz_answer) %></p>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6>正解</h6>
+              <p class="card-text fw-bold text-danger ms-3 mb-0"><%= h(question.quiz_answer) %></p>
+            </div>
+            <% if question.quiz_question.present? && question.answer_text.present? %>
+              <%= button_to "このクイズと回答を保存する", save_quiz_and_answer_question_path(question), method: :post, class: "btn btn-outline-secondary btn-sm" %>
+            <% end %>
+          </div>
         <% else %>
           <div class="text-center text-muted p-5">
             <i class="fas fa-spinner fa-spin fa-2x"></i>
@@ -76,21 +83,10 @@
     <small class="text-muted"><%= time_ago_in_words(question.created_at) %>前</small>
     
     <div class="action-links">
-      <% if question.quiz_question.present? && question.answer_text.present? %>
-        <%= button_to "このクイズと回答を保存する", save_quiz_and_answer_question_path(question), method: :post, class: "btn btn-outline-secondary btn-sm" %>
-      <% end %>
-
       <% if user_signed_in? && current_user == question.user %>
         <% if defined?(edit_question_path) %>
           <%= link_to edit_question_path(question), class: 'btn btn-outline-secondary btn-sm' do %>
             <i class="fas fa-edit"></i>
-          <% end %>
-        <% end %>
-        <% if defined?(question_path) %>
-          <%= link_to question_path(question),
-              data: { turbo_method: :delete, turbo_confirm: '本当に削除しますか？' },
-              class: 'btn btn-outline-danger btn-sm' do %>
-            <i class="fas fa-trash-alt"></i>
           <% end %>
         <% end %>
       <% end %>

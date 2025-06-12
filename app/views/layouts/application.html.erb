@@ -7,34 +7,16 @@
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "custom", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-      /* Sidebar hover effect */
-      .sidebar-hover-container {
-        transition: width 0.2s ease-in-out;
-        width: 80px; /* 最小幅 */
-        overflow: hidden;
-        white-space: nowrap;
-      }
-      .sidebar-hover-container:hover {
-        width: 250px; /* 展開時の幅 */
-      }
-      .sidebar-hover-container .sidebar-text {
-        transition: opacity 0.2s ease-in-out;
-        opacity: 0;
-      }
-      .sidebar-hover-container:hover .sidebar-text {
-        opacity: 1;
-      }
-    </style>
   </head>
 
   <body class="d-flex flex-column vh-100">
     <!-- ▼ ここからヘッダー部分 -->
     <header class="p-2 bg-light border-bottom">
       <div class="container-fluid d-flex justify-content-between align-items-center">
-        <%= link_to '🏠 トップページに戻る', root_path, class: "fw-bold text-dark text-decoration-none" %>
+        <%= link_to '🏠 トップページに戻る', root_path, class: "fw-bold text-decoration-none" %>
 
         <% if user_signed_in? %>
           <p class="mb-0 small">ログイン中：<%= current_user.email %></p>
