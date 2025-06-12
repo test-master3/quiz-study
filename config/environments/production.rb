@@ -96,12 +96,12 @@ Rails.application.configure do
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
   # 起動時に必要な環境変数をチェック
-  config.after_initialize do
-    required_env_vars = %w[BASIC_AUTH_USER BASIC_AUTH_PASSWORD GEMINI_API_KEY]
-    missing_env_vars = required_env_vars.select { |var| ENV[var].blank? }
+  # config.after_initialize do
+  #   required_env_vars = %w[BASIC_AUTH_USER BASIC_AUTH_PASSWORD GEMINI_API_KEY]
+  #   missing_env_vars = required_env_vars.select { |var| ENV[var].blank? }
     
-    if missing_env_vars.any?
-      raise "Missing required environment variables: #{missing_env_vars.join(', ')}"
-    end
-  end
+  #   if missing_env_vars.any?
+  #     raise "Missing required environment variables: #{missing_env_vars.join(', ')}"
+  #   end
+  # end
 end
