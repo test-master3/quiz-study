@@ -1,76 +1,10 @@
 <%# app/views/questions/show.html.erb %>
-<div class="container">
-  <div class="question-detail">
-    <div class="page-header">
-      <h1>質問の詳細</h1>
-      <%= link_to questions_path, class: 'action-button' do %>
-        <i class="fas fa-arrow-left"></i>
-        <span>質問一覧に戻る</span>
-      <% end %>
-    </div>
+<div class="flex-grow-1" style="overflow-y: auto;">
+  <div class="container py-4">
+    <%= render partial: "questions/question", locals: { question: @question } %>
 
-    <div class="detail-section">
-      <div class="section-header">
-        <h2>
-          <i class="fas fa-question-circle"></i>
-          <span>質問内容</span>
-        </h2>
-      </div>
-      <div class="content-area">
-        <%= simple_format(h(@question.content)) %>
-      </div>
-    </div>
-
-    <% if @question.answer_text.present? %>
-      <div class="detail-section">
-        <div class="section-header">
-          <h2>
-            <i class="fas fa-robot"></i>
-            <span>AIの回答</span>
-          </h2>
-        </div>
-        <div class="content-area">
-          <%= simple_format(h(@question.answer_text)) %>
-        </div>
-      </div>
-    <% end %>
-
-    <% if @question.quiz_question.present? %>
-      <div class="detail-section">
-        <div class="section-header">
-          <h2>
-            <i class="fas fa-graduation-cap"></i>
-            <span>クイズ</span>
-          </h2>
-        </div>
-        <div class="content-area">
-          <div class="quiz-question">
-            <h3>問題</h3>
-            <p><%= @question.quiz_question %></p>
-          </div>
-          <div class="quiz-choices">
-            <h3>選択肢</h3>
-            <%= simple_format(@question.quiz_choices) %>
-          </div>
-          <div class="quiz-answer">
-            <h3>正解</h3>
-            <p><%= @question.quiz_answer %></p>
-          </div>
-        </div>
-      </div>
-    <% end %>
-
-    <div class="detail-footer">
-      <div class="meta-info">
-        <span class="meta-item">
-          <i class="fas fa-user"></i>
-          <span>投稿者: <%= @question.user.email %></span>
-        </span>
-        <span class="meta-item">
-          <i class="far fa-clock"></i>
-          <span>投稿日時: <%= l @question.created_at, format: :long %></span>
-        </span>
-      </div>
+    <div class="mt-4">
+      <%= link_to '一覧に戻る', questions_path, class: 'btn btn-secondary' %>
     </div>
   </div>
 </div>
