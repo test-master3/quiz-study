@@ -1,5 +1,5 @@
 <%# 質問入力フォーム %>
-<%= form_with model: @question, url: questions_path, data: { controller: "form-submit" } do |f| %>
+<%= form_with model: @question, url: questions_path do |f| %>
 
   <%# --- エラーメッセージ表示 --- %>
   <% if @question.errors.any? %>
@@ -46,8 +46,7 @@
     <%= f.text_area :content,
       class: "form-control",
       rows: 3,
-      placeholder: "AIに聞きたいことを入力してください...",
-      data: { action: "keydown->form-submit#onKeyPress" } %>
+      placeholder: "AIに聞きたいことを入力してください..." %>
     
     <%= f.submit "送信", class: "btn btn-primary" %>
   </div>

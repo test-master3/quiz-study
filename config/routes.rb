@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   # 質問・回答・クイズ
   resources :questions, only: [:new, :create, :index, :show] do
     post 'save_quiz_and_answer', on: :member
+    delete :bulk_delete, on: :collection
   end
 
   # GAS連携
@@ -38,6 +39,7 @@ Rails.application.routes.draw do
     collection do
       post :update_send_to_line
       post :reset_send_to_line
+      post :manage
     end
   end
 

@@ -33,12 +33,23 @@
       <div class="col-md-6 border-start ps-4">
         <%# --- 例え話セクション --- %>
         <% if question.analogy_text.present? %>
+          <%
+            # analogy_textからテーマ行と本文を分離する
+            analogy_lines = question.analogy_text.strip.lines
+            analogy_title = "例えるなら..."
+            analogy_body = question.analogy_text
+
+            if analogy_lines.first&.start_with?("◎テーマ：")
+              analogy_title = analogy_lines.first.strip
+              analogy_body = analogy_lines[1..-1].join.strip
+            end
+          %>
           <div class="mb-4">
             <h5 class="card-title">
-              <i class="fas fa-lightbulb text-warning me-2"></i>例えるなら...
+              <i class="fas fa-lightbulb text-warning me-2"></i><%= h(analogy_title) %>
             </h5>
             <div class="card-text p-3 bg-white rounded border">
-              <%= simple_format(h(question.analogy_text)) %>
+              <%= simple_format(h(analogy_body)) %>
             </div>
           </div>
         <% end %>
