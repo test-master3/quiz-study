@@ -1,36 +1,53 @@
 <div class="flex-grow-1" style="overflow-y: auto;">
   <div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="mb-0">質問一覧</h1>
-      <%= link_to new_question_path, class: 'btn btn-primary' do %>
-        <i class="fas fa-plus me-2"></i>新しい質問をする
-      <% end %>
-    </div>
-
-    <% if @questions.any? %>
-      <div class="list-group">
-        <% @questions.each do |question| %>
-          <%= link_to question_path(question), class: "list-group-item list-group-item-action" do %>
-            <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1"><%= truncate(question.content, length: 50) %></h5>
-              <small><%= time_ago_in_words(question.created_at) %>前</small>
-            </div>
-            <p class="mb-1 text-muted">
-              <% if question.answer_text.present? %>
-                回答あり
-              <% else %>
-                回答待ち
-              <% end %>
-            </p>
+    <%= form_with url: bulk_delete_questions_path, method: :delete, data: { controller: "checkbox-select-all" } do |form| %>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">質問一覧</h1>
+        <div>
+          <%= form.submit "選択した質問を削除", class: "btn btn-danger me-2", data: { turbo_confirm: '選択した質問を本当に削除しますか？' } %>
+          <%= link_to new_question_path, class: 'btn btn-primary' do %>
+            <i class="fas fa-plus me-2"></i>新しい質問をする
           <% end %>
-        <% end %>
-      </div>
-    <% else %>
-      <div class="card">
-        <div class="card-body text-center p-5">
-          <p class="mb-0">まだ質問がありません。</p>
         </div>
       </div>
+
+      <% if @questions.any? %>
+        <div class="list-group">
+          <div class="list-group-item bg-light">
+            <%= check_box_tag "select_all", "1", false, 
+                id: "questions_select_all",
+                data: { checkbox_select_all_target: "master", action: "checkbox-select-all#toggle" },
+                class: "me-3" %>
+            <strong>すべて選択/解除</strong>
+          </div>
+          <% @questions.each do |question| %>
+            <div class="list-group-item list-group-item-action d-flex align-items-center">
+              <%= check_box_tag "question_ids[]", question.id, false, 
+                  id: "question_#{question.id}",
+                  class: "me-3", data: { checkbox_select_all_target: "child" } %>
+              <%= link_to question_path(question), class: "text-decoration-none text-dark flex-grow-1" do %>
+                <div class="d-flex w-100 justify-content-between">
+                  <h5 class="mb-1"><%= truncate(question.content, length: 50) %></h5>
+                  <small><%= time_ago_in_words(question.created_at) %>前</small>
+                </div>
+                <p class="mb-1 text-muted">
+                  <% if question.answer_text.present? %>
+                    回答あり
+                  <% else %>
+                    回答待ち
+                  <% end %>
+                </p>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="card">
+          <div class="card-body text-center p-5">
+            <p class="mb-0">まだ質問がありません。</p>
+          </div>
+        </div>
+      <% end %>
     <% end %>
   </div>
 </div>

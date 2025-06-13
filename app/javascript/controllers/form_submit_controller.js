@@ -10,8 +10,11 @@ export default class extends Controller {
       // デフォルトの動作（改行）をキャンセル
       event.preventDefault();
       
-      // このコントローラーが接続されているフォーム自体を送信する
-      this.element.requestSubmit();
+      // ▼▼▼ フォーム内の送信ボタンを探して、それをクリックする方式に変更 ▼▼▼
+      const submitButton = this.element.form.querySelector('input[type="submit"], button[type="submit"]');
+      if (submitButton) {
+        submitButton.click();
+      }
     }
   }
 } 

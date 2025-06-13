@@ -2,31 +2,44 @@
 <div class="user-profile">
   <h2>LINE送信クイズ管理</h2>
 
-  <%= form_with url: update_send_to_line_quizzes_path, method: :post, class: "quiz-form" do %>
-    <table class="quiz-table">
-      <thead>
-        <tr>
-          <th>クイズ内容</th>
-          <th>送信対象</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <% @quizzes.each do |quiz| %>
-          <tr>
-            <td><%= quiz.quiz_text %></td>
-            <td>
-              <%= check_box_tag "quiz_ids[]", quiz.id, quiz.send_to_line %>
-            </td>
-          </tr>
+  <div data-controller="checkbox-select-all">
+    <%= form_with url: manage_quizzes_path, method: :post, class: "quiz-form" do %>
+      
+      <div class="form-header mb-3 d-flex justify-content-between">
+        <%= button_tag type: 'submit', name: "commit", value: "delete",
+            data: { turbo_confirm: "選択したクイズを本当に削除しますか？" }, 
+            class: "submit-button danger" do %>
+          <i class="fas fa-trash-alt"></i> 選択したクイズを削除
         <% end %>
-      </tbody>
-    </table>
+        <%= submit_tag "送信対象を更新する", class: "submit-button" %>
+      </div>
 
-  <div class="form-footer">
-    <%= submit_tag "更新する", class: "submit-button" %>
-    <%# <%= button_to "全てのクイズを送信対象から外す", reset_send_to_line_quizzes_path, method: :post, class: "submit-button" %>
+      <table class="quiz-table">
+        <thead>
+          <tr>
+            <th>
+              <input type="checkbox" data-checkbox-select-all-target="master" data-action="checkbox-select-all#toggle" id="quizzes_delete_select_all">
+              削除
+            </th>
+            <th>LINEへ送信</th>
+            <th>クイズ内容</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @quizzes.each do |quiz| %>
+            <tr>
+              <td>
+                <input type="checkbox" name="delete_quiz_ids[]" value="<%= quiz.id %>" data-checkbox-select-all-target="child" id="quiz_delete_<%= quiz.id %>">
+              </td>
+              <td>
+                <%= check_box_tag "quiz_ids[]", quiz.id, quiz.send_to_line, class: "send-checkbox", id: "quiz_send_#{quiz.id}" %>
+              </td>
+              <td><%= quiz.quiz_text %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
   </div>
-
-  <% end %>
 </div>

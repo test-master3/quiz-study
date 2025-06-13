@@ -72,6 +72,21 @@ class QuestionsController < ApplicationController
     redirect_to questions_path, notice: "クイズと回答を保存しました！"
   end
 
+  def bulk_delete
+    if params[:question_ids].blank?
+      return redirect_to questions_path, alert: "削除する質問が選択されていません。"
+    end
+
+    questions_to_delete = current_user.questions.where(id: params[:question_ids])
+    count = questions_to_delete.count
+    
+    if questions_to_delete.destroy_all
+      redirect_to questions_path, notice: "#{count}件の質問を削除しました。"
+    else
+      redirect_to questions_path, alert: "質問の削除に失敗しました。"
+    end
+  end
+
   private
 
     # idを元に@questionを設定する共通メソッド
