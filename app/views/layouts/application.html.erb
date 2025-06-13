@@ -7,28 +7,74 @@
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "custom", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   </head>
 
-  <body>
+  <body class="d-flex flex-column vh-100">
     <!-- ▼ ここからヘッダー部分 -->
-    <header style="padding: 10px; background-color: #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
-      <%= link_to '🏠 トップページに戻る', root_path, style: "font-weight: bold; color: #3366cc; text-decoration: none;" %>
+    <header class="p-2 bg-light border-bottom">
+      <div class="container-fluid d-flex justify-content-between align-items-center">
+        <%= link_to '🏠 トップページに戻る', root_path, class: "fw-bold text-decoration-none" %>
 
-      <% if user_signed_in? %>
-        <p style="margin: 0;">ログイン中：<%= current_user.email %></p>
-      <% else %>
-        <p style="margin: 0;">ログインしていません</p>
-      <% end %>
+        <% if user_signed_in? %>
+          <p class="mb-0 small">ログイン中：<%= current_user.email %></p>
+        <% else %>
+          <p class="mb-0 small">ログインしていません</p>
+        <% end %>
+      </div>
     </header>
     <!-- ▲ ヘッダーここまで -->
-  <% if notice %>
-    <p class="alert alert-success"><%= notice %></p>
-  <% end %>
-  <% if alert %>
-    <p class="alert alert-danger"><%= alert %></p>
-  <% end %>
-    <%= yield %>
+
+    <main class="flex-grow-1" style="overflow-y: hidden;">
+      <div class="container-fluid h-100">
+        <div class="row h-100 flex-nowrap">
+          <%# --- Sidebar --- %>
+          <div class="sidebar-hover-container bg-light border-end p-3">
+            <% if user_signed_in? %>
+              <div class="list-group list-group-flush">
+                <%= link_to user_path(current_user), class: 'list-group-item list-group-item-action bg-transparent p-3' do %>
+                  <i class="fas fa-user fa-fw me-3"></i><span class="sidebar-text">マイページ</span>
+                <% end %>
+                <%= link_to new_line_account_path, class: 'list-group-item list-group-item-action bg-transparent p-3' do %>
+                  <i class="fab fa-line fa-fw me-3"></i><span class="sidebar-text">LINE連携</span>
+                <% end %>
+              </div>
+              <hr>
+              <%= link_to destroy_user_session_path, 
+                  data: { turbo_method: :delete, turbo_confirm: 'ログアウトしますか？' }, 
+                  class: 'list-group-item list-group-item-action bg-transparent text-danger p-3' do %>
+                <i class="fas fa-sign-out-alt fa-fw me-3"></i><span class="sidebar-text">ログアウト</span>
+              <% end %>
+            <% else %>
+              <div class="list-group list-group-flush">
+                <%= link_to new_user_registration_path, class: 'list-group-item list-group-item-action bg-transparent p-3' do %>
+                  <i class="fas fa-user-plus fa-fw me-3"></i><span class="sidebar-text">新規登録</span>
+                <% end %>
+                <%= link_to new_user_session_path, class: 'list-group-item list-group-item-action bg-transparent p-3' do %>
+                  <i class="fas fa-sign-in-alt fa-fw me-3"></i><span class="sidebar-text">ログイン</span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+
+          <%# --- メインコンテンツエリア --- %>
+          <div class="col p-0 d-flex flex-column h-100">
+            <% if notice || alert %>
+              <div class="container-fluid mt-2">
+                <% if notice %>
+                  <p class="alert alert-success mb-0"><%= notice %></p>
+                <% end %>
+                <% if alert %>
+                  <p class="alert alert-danger mb-0"><%= alert %></p>
+                <% end %>
+              </div>
+            <% end %>
+            <%= yield %>
+          </div>
+        </div>
+      </div>
+    </main>
   </body>
 </html>

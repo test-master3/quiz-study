@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_11_024929) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_12_224939) do
   create_table "answers", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.text "content"
     t.boolean "from_gpt"
@@ -34,6 +34,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_11_024929) do
     t.text "quiz_question"
     t.text "quiz_choices"
     t.string "quiz_answer"
+    t.text "analogy_text"
+    t.string "abstraction_level"
+    t.string "analogy_genre"
     t.index ["user_id"], name: "index_questions_on_user_id"
   end
 
@@ -44,6 +47,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_11_024929) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.text "quiz_choices"
+    t.string "quiz_link"
     t.index ["question_id"], name: "index_quizzes_on_question_id"
     t.index ["user_id"], name: "index_quizzes_on_user_id"
   end
