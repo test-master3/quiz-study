@@ -1,6 +1,6 @@
 module Api
   module V1
-    module Line
+    module LineNotifications
       class NotifierController < ApplicationController
         protect_from_forgery with: :null_session
         before_action :check_api_key
