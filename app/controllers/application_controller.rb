@@ -21,6 +21,6 @@ class ApplicationController < ActionController::Base
 
   # APIまたはLINEのWebhookからのリクエストかを判定するメソッド
   def api_or_webhook_controller?
-    self.class.name.start_with?('Api::') || self.class == LineBotWebhookController
+    request.path.start_with?('/api/') || self.class == LineBotWebhookController
   end
 end
