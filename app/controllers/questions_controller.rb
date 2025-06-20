@@ -4,7 +4,7 @@ class QuestionsController < ApplicationController
   before_action :set_question, only: [:show, :save_quiz_and_answer]
 
   def index
-    @questions = Question.order(created_at: :desc)
+    @questions = current_user.questions.order(created_at: :desc)
   end
 
   def show

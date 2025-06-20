@@ -2,13 +2,10 @@
   <div class="container py-4">
     <%= form_with url: bulk_delete_questions_path, method: :delete, data: { controller: "checkbox-select-all" } do |form| %>
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0">質問一覧</h1>
-        <div>
-          <%= form.submit "選択した質問を削除", class: "btn btn-danger me-2", data: { turbo_confirm: '選択した質問を本当に削除しますか？' } %>
-          <%= link_to new_question_path, class: 'btn btn-primary' do %>
-            <i class="fas fa-plus me-2"></i>新しい質問をする
-          <% end %>
-        </div>
+        <h1 class="h2 mb-0">質問一覧</h1>
+        <%= link_to root_path, class: "btn btn-primary" do %>
+          <i class="fas fa-home me-2"></i>トップページへ
+        <% end %>
       </div>
 
       <% if @questions.any? %>

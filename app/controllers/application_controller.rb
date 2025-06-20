@@ -1,11 +1,16 @@
 class ApplicationController < ActionController::Base
   before_action :basic_auth, if: -> { Rails.env.production? }, unless: :webhook_controller?
+  before_action :set_recent_questions, if: :user_signed_in?
 
   def after_sign_up_path_for(resource)
     new_question_path
   end
 
   private
+
+  def set_recent_questions
+    @questions = current_user.questions.order(created_at: :desc).limit(5)
+  end
 
   def basic_auth
     authenticate_or_request_with_http_basic do |username, password|

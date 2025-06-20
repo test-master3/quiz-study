@@ -1,0 +1,36 @@
+<div class="container py-4">
+  <div class="card">
+    <div class="card-header">
+      <h1 class="h3 mb-0">クイズ詳細</h1>
+    </div>
+    <div class="card-body">
+      <% if @quiz.question %>
+        <div class="mb-4">
+          <h5 class="card-title text-muted">関連する質問</h5>
+          <p><%= @quiz.question.content %></p>
+        </div>
+      <% end %>
+
+      <div class="mb-4">
+        <h5 class="card-title text-muted">クイズの問題文</h5>
+        <div class="p-3 bg-light rounded">
+          <%= simple_format(@quiz.quiz_text) %>
+        </div>
+      </div>
+      
+      <% if @quiz.quiz_choices.present? %>
+        <div class="mb-4">
+          <h5 class="card-title text-muted">選択肢</h5>
+          <div class="p-3">
+            <%= simple_format(@quiz.quiz_choices) %>
+          </div>
+        </div>
+      <% end %>
+
+    </div>
+    <div class="card-footer d-flex justify-content-between">
+      <%= link_to 'クイズ一覧に戻る', quizzes_path, class: 'btn btn-secondary' %>
+      <small class="text-muted">作成日: <%= l @quiz.created_at, format: :long %></small>
+    </div>
+  </div>
+</div> 

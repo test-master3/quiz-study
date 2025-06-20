@@ -28,23 +28,41 @@
           <p class="fs-4"><%= @user.questions.count %> 件</p>
         </div>
 
-        <div class="action-buttons d-grid gap-2 d-md-flex justify-content-md-start">
-          <%= link_to '質問一覧', questions_path, class: 'btn btn-subtle-primary' %>
-          <% unless @user.line_linked? %>
-            <%= link_to new_line_account_path, class: 'btn btn-success' do %>
-              <i class="fab fa-line me-2"></i>LINE連携をする
-            <% end %>
-          <% end %>
-
-          <%= link_to quizzes_path, class: 'btn btn-outline-secondary' do %>
-            <i class="fas fa-clipboard-list me-2"></i>LINE送信クイズ管理
-          <% end %>
-
-          <%= link_to new_question_path, class: 'btn btn-primary' do %>
-            <i class="fas fa-plus me-2"></i>新しい質問をする
-          <% end %>
-        </div>
       </div>
+    </div>
+
+    <div class="card mt-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">最近のクイズ履歴</h2>
+      </div>
+      <div class="card-body">
+        <% if @quizzes.any? %>
+          <div class="list-group list-group-flush">
+            <% @quizzes.each do |quiz| %>
+              <% if quiz.question %>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div class="me-3">
+                    <p class="fw-bold mb-1"><%= truncate(quiz.question.content, length: 80) %></p>
+                    <small class="text-muted">挑戦日: <%= l(quiz.created_at, format: :short) %></small>
+                  </div>
+                  <%= link_to "クイズを確認", quiz_path(quiz), class: "btn btn-outline-secondary btn-sm" %>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-muted">まだ挑戦したクイズはありません。</p>
+        <% end %>
+      </div>
+      <div class="card-footer text-end">
+        <%= link_to "すべてのクイズ履歴を見る", quizzes_path, class: "btn btn-secondary" %>
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <%= link_to root_path, class: "btn btn-lg btn-primary" do %>
+        <i class="fas fa-home me-2"></i>トップページへ
+      <% end %>
     </div>
   </div>
 </div>

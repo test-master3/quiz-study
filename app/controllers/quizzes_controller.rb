@@ -6,6 +6,10 @@ class QuizzesController < ApplicationController
     @quizzes = current_user.quizzes.includes(:question).order(created_at: :desc)
   end
 
+  def show
+    @quiz = current_user.quizzes.find(params[:id])
+  end
+
   def manage
     case params[:commit]
     when 'delete'
