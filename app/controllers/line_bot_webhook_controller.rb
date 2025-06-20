@@ -1,15 +1,13 @@
 require 'line/bot'
 
-class LineWebhookController < ApplicationController
+class LineBotWebhookController < ApplicationController
   protect_from_forgery except: :callback
 
   # 連携コードの有効期間（分）
   TOKEN_VALID_FOR = 10
 
   def callback
-    # デプロイ確認用のログ
-    Rails.logger.info("✅ DEPLOY CHECK: LineWebhookController#callback called (version with ::)")
-
+    # デプロイ確認用のログは不要になったので削除
     body = request.body.read
     signature = request.env['HTTP_X_LINE_SIGNATURE']
     return head :bad_request unless client.validate_signature(body, signature)
@@ -17,9 +15,9 @@ class LineWebhookController < ApplicationController
     events = client.parse_events_from(body)
     events.each do |event|
       # メッセージイベント以外は処理しない
-      next unless event.is_a?(::Line::Bot::Event::Message)
+      next unless event.is_a?(Line::Bot::Event::Message)
       # テキストメッセージ以外は処理しない
-      next unless event.type == ::Line::Bot::Event::MessageType::Text
+      next unless event.type == Line::Bot::Event::MessageType::Text
 
       handle_message_event(event)
     end
@@ -30,7 +28,7 @@ class LineWebhookController < ApplicationController
   private
 
   def client
-    @client ||= ::Line::Bot::Client.new do |config|
+    @client ||= Line::Bot::Client.new do |config|
       # 環境変数から認証情報を設定
       config.channel_secret = ENV['LINE_CHANNEL_SECRET']
       config.channel_token = ENV['LINE_CHANNEL_TOKEN']

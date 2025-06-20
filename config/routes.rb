@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
   # LINE連携関連
   resources :line_accounts, only: [:new]
-  post '/line/webhook', to: 'line_webhook#callback'
+  post '/line/webhook', to: 'line_bot_webhook#callback'
 
   # Deviseユーザー認証
   devise_for :users, controllers: {
