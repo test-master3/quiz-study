@@ -42,7 +42,7 @@ yarn-error.log
 
 npm-debug.log
 
-app/assets/images/line_qr_code.png
+# app/assets/images/line_qr_code.png
 
 # GCPサービスアカウント鍵
 /config/credentials/vertex-key.json
