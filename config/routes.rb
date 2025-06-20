@@ -27,7 +27,7 @@ Rails.application.routes.draw do
   # GAS連携
   namespace :api do
     namespace :v1 do
-      namespace :line_notifications do
+      scope :line_notifications, module: :line_notifications, as: :line_notifications do
         get 'quiz_today', to: 'notifier#quiz_today'
       end
     end
