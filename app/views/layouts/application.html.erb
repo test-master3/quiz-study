@@ -27,9 +27,15 @@
             <h6 class="text-white-50">最近の質問</h6>
             <div class="list-group list-group-flush mb-4">
               <% @questions.first(5).each do |question| %>
-                <a href="#question_<%= question.id %>" class="list-group-item list-group-item-action bg-transparent text-white p-2" data-bs-dismiss="offcanvas" data-action="click->scroll-to#scroll">
-                  <i class="fas fa-history fa-fw me-2"></i><%= truncate(question.content, length: 20) %>
-                </a>
+                <% if current_page?(controller: 'questions', action: 'new') %>
+                  <a href="#question_<%= question.id %>" class="list-group-item list-group-item-action bg-transparent text-white p-2" data-bs-dismiss="offcanvas" data-action="click->scroll-to#scroll">
+                    <i class="fas fa-history fa-fw me-2"></i><%= truncate(question.content, length: 20) %>
+                  </a>
+                <% else %>
+                  <a href="<%= root_path(anchor: "question_#{question.id}") %>" class="list-group-item list-group-item-action bg-transparent text-white p-2" data-turbo-action="replace">
+                    <i class="fas fa-history fa-fw me-2"></i><%= truncate(question.content, length: 20) %>
+                  </a>
+                <% end %>
               <% end %>
             </div>
           <% end %>
@@ -81,7 +87,18 @@
         </div>
 
         <% if user_signed_in? %>
-          <p class="mb-0 small">ログイン中：<%= current_user.email %></p>
+          <div class="d-flex align-items-center">
+            <% if current_user.line_linked? %>
+              <span class="badge bg-success me-3">
+                <i class="fab fa-line me-1"></i>連携済み
+              </span>
+            <% else %>
+              <span class="badge bg-secondary me-3">
+                <i class="fab fa-line me-1"></i>未連携
+              </span>
+            <% end %>
+            <p class="mb-0 small">ログイン中：<%= current_user.email %></p>
+          </div>
         <% else %>
           <p class="mb-0 small">ログインしていません</p>
         <% end %>
@@ -89,7 +106,7 @@
     </header>
     <!-- ▲ ヘッダーここまで -->
 
-    <main class="flex-grow-1" style="overflow-y: auto;">
+    <main class="flex-grow-1 d-flex flex-column" style="overflow-y: hidden;">
       <% if notice || alert %>
         <div class="container-fluid mt-2">
           <% if notice %>

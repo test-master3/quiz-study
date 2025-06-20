@@ -1,25 +1,44 @@
-<%# 上半分（チャットエリア）は、スクロールできるようにします %>
-<div class="flex-grow-1" style="overflow-y: auto;">
-  <div class="container-md mx-auto">
-    <div id="questions" class="py-3">
-      <% if @questions.empty? %>
-        <div class="text-center" style="padding-top: 15vh; padding-bottom: 15vh;">
-          <i class="fas fa-wind fa-3x text-muted mb-3"></i>
-          <h3 class="text-muted">まだ質問はありません</h3>
-          <p class="text-muted">下のフォームから、AIに聞いてみたい最初の質問をしてみましょう！</p>
-        </div>
-      <% else %>
-        <% @questions.each do |question| %>
-          <%= render partial: "questions/question", locals: { question: question } %>
+<div class="d-flex flex-column h-100">
+  <%# 上半分（チャットエリア）は、スクロールできるようにします %>
+  <div class="flex-grow-1" style="overflow-y: auto;">
+    <div class="container-md mx-auto">
+      <div id="questions" class="py-3">
+        <%# ログイン状態と質問の有無で表示を分岐 %>
+        <% if user_signed_in? %>
+          <% if @questions.any? %>
+            <% @questions.each do |question| %>
+              <%= render partial: "questions/question", locals: { question: question } %>
+            <% end %>
+          <% else %>
+            <%# ログイン済み & 質問なし %>
+            <div class="text-center" style="padding-top: 15vh; padding-bottom: 15vh;">
+              <i class="fas fa-wind fa-3x text-muted mb-3"></i>
+              <h3 class="text-muted">まだ質問はありません</h3>
+              <p class="text-muted">下のフォームから、AIに聞いてみたい最初の質問をしてみましょう！</p>
+            </div>
+          <% end %>
+        <% else %>
+          <%# 未ログイン時のウェルカムメッセージ %>
+          <div class="text-center" style="padding-top: 15vh; padding-bottom: 15vh;">
+            <i class="fas fa-sign-in-alt fa-3x text-muted mb-3"></i>
+            <h2 class="h3">ようこそ！</h2>
+            <p class="lead text-muted">AIへの質問やクイズ機能を利用するには、ログインまたは新規登録が必要です。</p>
+            <div class="mt-4">
+              <%= link_to "ログイン", new_user_session_path, class: "btn btn-primary btn-lg me-2" %>
+              <%= link_to "新規登録", new_user_registration_path, class: "btn btn-secondary btn-lg" %>
+            </div>
+          </div>
         <% end %>
-      <% end %>
+      </div>
     </div>
   </div>
-</div>
 
-<%# 下半分（フォームエリア）は、常に下に固定します %>
-<div class="p-3 bg-light border-top">
-  <div class="container-md mx-auto">
-    <%= render partial: "questions/form", locals: { question: @question } %>
-  </div>
+  <%# ログインしている場合のみ、下半分のフォームエリアを表示します %>
+  <% if user_signed_in? %>
+    <div class="p-3 bg-light border-top">
+      <div class="container-md mx-auto">
+        <%= render partial: "questions/form", locals: { question: @question } %>
+      </div>
+    </div>
+  <% end %>
 </div>

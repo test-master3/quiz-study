@@ -6,25 +6,40 @@
         <div class="card-header">
           <h2>LINE連携</h2>
         </div>
-        <div class="card-body">
-          <p class="card-text">
-            1. 以下のQRコードを読み取って、<br>LINEで公式アカウントを友だち追加してください。
-          </p>
 
-          <%# app/assets/images/line_qr_code.png を表示します %>
-          <%= image_tag "line_qr_code.png", alt: "LINE連携用QRコード", class: "img-fluid my-3", style: "max-width: 250px;" %>
-
-          <p class="card-text">
-            2. 友だち追加後、LINEのトーク画面で<br>以下の6桁の連携コードを送信してください。
-          </p>
-
-          <div class="alert alert-info d-inline-block my-3">
-            <h3 class="font-weight-bold tracking-wider mb-0"><%= @link_token %></h3>
+        <% if @line_linked %>
+          <%# 連携済みの場合の表示 %>
+          <div class="card-body p-5">
+            <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+            <h3 class="card-title">連携済みです</h3>
+            <p class="card-text text-muted">
+              すでにLINEアカウントとの連携は完了しています。<br>
+              クイズの通知など、便利な機能をご利用いただけます。
+            </p>
+            <%= link_to 'トップページに戻る', root_path, class: 'btn btn-primary mt-3' %>
           </div>
-        </div>
-        <div class="card-footer text-muted">
-          <p class="mb-0">連携が完了すると、LINEに通知が届きます。</p>
-        </div>
+        <% else %>
+          <%# 未連携の場合の表示 %>
+          <div class="card-body">
+            <p class="card-text">
+              1. 以下のQRコードを読み取って、<br>LINEで公式アカウントを友だち追加してください。
+            </p>
+
+            <%# app/assets/images/line_qr_code.png を表示します %>
+            <%= image_tag "line_qr_code.png", alt: "LINE連携用QRコード", class: "img-fluid my-3", style: "max-width: 250px;" %>
+
+            <p class="card-text">
+              2. 友だち追加後、LINEのトーク画面で<br>以下の6桁の連携コードを送信してください。
+            </p>
+
+            <div class="alert alert-info d-inline-block my-3">
+              <h3 class="font-weight-bold tracking-wider mb-0"><%= @link_token %></h3>
+            </div>
+          </div>
+          <div class="card-footer text-muted">
+            <p class="mb-0">連携が完了すると、LINEに通知が届きます。</p>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>
