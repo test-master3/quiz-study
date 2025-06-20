@@ -7,6 +7,9 @@ class LineWebhookController < ApplicationController
   TOKEN_VALID_FOR = 10
 
   def callback
+    # デプロイ確認用のログ
+    Rails.logger.info("✅ DEPLOY CHECK: LineWebhookController#callback called (version with ::)")
+
     body = request.body.read
     signature = request.env['HTTP_X_LINE_SIGNATURE']
     return head :bad_request unless client.validate_signature(body, signature)
