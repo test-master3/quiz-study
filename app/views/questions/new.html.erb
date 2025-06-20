@@ -2,8 +2,16 @@
 <div class="flex-grow-1" style="overflow-y: auto;">
   <div class="container-md mx-auto">
     <div id="questions" class="py-3">
-      <% @questions.each do |question| %>
-        <%= render partial: "questions/question", locals: { question: question } %>
+      <% if @questions.empty? %>
+        <div class="text-center" style="padding-top: 15vh; padding-bottom: 15vh;">
+          <i class="fas fa-wind fa-3x text-muted mb-3"></i>
+          <h3 class="text-muted">まだ質問はありません</h3>
+          <p class="text-muted">下のフォームから、AIに聞いてみたい最初の質問をしてみましょう！</p>
+        </div>
+      <% else %>
+        <% @questions.each do |question| %>
+          <%= render partial: "questions/question", locals: { question: question } %>
+        <% end %>
       <% end %>
     </div>
   </div>

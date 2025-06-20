@@ -90,35 +90,6 @@ body {
   color: var(--color-text) !important;
 }
 
-/* --- Sidebar --- */
-.sidebar-hover-container {
-  transition: width 0.2s ease-in-out;
-  width: 80px;
-  overflow: hidden;
-  white-space: nowrap;
-  background-color: var(--color-bg-dark) !important;
-  border-color: var(--color-border) !important;
-}
-.sidebar-hover-container a, 
-.sidebar-hover-container i {
-  color: var(--color-text-on-dark);
-}
-
-.sidebar-hover-container a:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.sidebar-hover-container:hover {
-  width: 250px;
-}
-.sidebar-hover-container .sidebar-text {
-  transition: opacity 0.2s ease-in-out;
-  opacity: 0;
-}
-.sidebar-hover-container:hover .sidebar-text {
-  opacity: 1;
-}
-
 /* --- Header & Form Area --- */
 header.p-2, .p-3.bg-light.border-top {
   background-color: var(--color-bg-dark) !important;

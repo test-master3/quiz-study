@@ -8,15 +8,77 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "custom", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <%= javascript_importmap_tags %>
   </head>
 
   <body class="d-flex flex-column vh-100">
-    <!-- ▼ ここからヘッダー部分 -->
-    <header class="p-2 bg-light border-bottom">
+    <!-- ▼ Offcanvas Sidebar ▼ -->
+    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel" data-controller="scroll-to">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="sidebarLabel">メニュー</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <% if user_signed_in? %>
+          <!-- 最近の質問リスト (トップページでのみ表示) -->
+          <% if @questions && @questions.any? %>
+            <h6 class="text-white-50">最近の質問</h6>
+            <div class="list-group list-group-flush mb-4">
+              <% @questions.first(5).each do |question| %>
+                <a href="#question_<%= question.id %>" class="list-group-item list-group-item-action bg-transparent text-white p-2" data-bs-dismiss="offcanvas" data-action="click->scroll-to#scroll">
+                  <i class="fas fa-history fa-fw me-2"></i><%= truncate(question.content, length: 20) %>
+                </a>
+              <% end %>
+            </div>
+          <% end %>
+
+          <!-- ナビゲーションメニュー -->
+          <h6 class="text-white-50">ナビゲーション</h6>
+          <div class="list-group list-group-flush">
+            <%= link_to questions_path, class: 'list-group-item list-group-item-action bg-transparent text-white p-3' do %>
+              <i class="fas fa-list-alt fa-fw me-3"></i><span>質問一覧</span>
+            <% end %>
+            <%= link_to quizzes_path, class: 'list-group-item list-group-item-action bg-transparent text-white p-3' do %>
+              <i class="fas fa-tasks fa-fw me-3"></i><span>クイズ一覧</span>
+            <% end %>
+            <%= link_to new_line_account_path, class: 'list-group-item list-group-item-action bg-transparent text-white p-3' do %>
+              <i class="fab fa-line fa-fw me-3"></i><span>LINE連携</span>
+            <% end %>
+            <%= link_to user_path(current_user), class: 'list-group-item list-group-item-action bg-transparent text-white p-3' do %>
+              <i class="fas fa-user fa-fw me-3"></i><span>マイページ</span>
+            <% end %>
+          </div>
+          <hr class="text-white-50">
+          <%= link_to destroy_user_session_path, 
+              data: { turbo_method: :delete, turbo_confirm: 'ログアウトしますか？' }, 
+              class: 'list-group-item list-group-item-action bg-transparent text-danger p-3' do %>
+            <i class="fas fa-sign-out-alt fa-fw me-3"></i><span>ログアウト</span>
+          <% end %>
+        <% else %>
+          <div class="list-group list-group-flush">
+            <%= link_to new_user_registration_path, class: 'list-group-item list-group-item-action bg-transparent text-white p-3' do %>
+              <i class="fas fa-user-plus fa-fw me-3"></i><span>新規登録</span>
+            <% end %>
+            <%= link_to new_user_session_path, class: 'list-group-item list-group-item-action bg-transparent text-white p-3' do %>
+              <i class="fas fa-sign-in-alt fa-fw me-3"></i><span>ログイン</span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <!-- ▲ Offcanvas Sidebar ▲ -->
+
+    <!-- ▼ ヘッダー部分 -->
+    <header class="p-2 bg-dark text-white border-bottom">
       <div class="container-fluid d-flex justify-content-between align-items-center">
-        <%= link_to '🏠 トップページに戻る', root_path, class: "fw-bold text-decoration-none" %>
+        <div>
+          <button class="btn btn-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+            <i class="fas fa-bars"></i>
+          </button>
+          <%= link_to '🏠 トップページへ', root_path, class: "fw-bold text-decoration-none text-white ms-2" %>
+        </div>
 
         <% if user_signed_in? %>
           <p class="mb-0 small">ログイン中：<%= current_user.email %></p>
@@ -27,54 +89,19 @@
     </header>
     <!-- ▲ ヘッダーここまで -->
 
-    <main class="flex-grow-1" style="overflow-y: hidden;">
-      <div class="container-fluid h-100">
-        <div class="row h-100 flex-nowrap">
-          <%# --- Sidebar --- %>
-          <div class="sidebar-hover-container bg-light border-end p-3">
-            <% if user_signed_in? %>
-              <div class="list-group list-group-flush">
-                <%= link_to user_path(current_user), class: 'list-group-item list-group-item-action bg-transparent p-3' do %>
-                  <i class="fas fa-user fa-fw me-3"></i><span class="sidebar-text">マイページ</span>
-                <% end %>
-                <%= link_to new_line_account_path, class: 'list-group-item list-group-item-action bg-transparent p-3' do %>
-                  <i class="fab fa-line fa-fw me-3"></i><span class="sidebar-text">LINE連携</span>
-                <% end %>
-              </div>
-              <hr>
-              <%= link_to destroy_user_session_path, 
-                  data: { turbo_method: :delete, turbo_confirm: 'ログアウトしますか？' }, 
-                  class: 'list-group-item list-group-item-action bg-transparent text-danger p-3' do %>
-                <i class="fas fa-sign-out-alt fa-fw me-3"></i><span class="sidebar-text">ログアウト</span>
-              <% end %>
-            <% else %>
-              <div class="list-group list-group-flush">
-                <%= link_to new_user_registration_path, class: 'list-group-item list-group-item-action bg-transparent p-3' do %>
-                  <i class="fas fa-user-plus fa-fw me-3"></i><span class="sidebar-text">新規登録</span>
-                <% end %>
-                <%= link_to new_user_session_path, class: 'list-group-item list-group-item-action bg-transparent p-3' do %>
-                  <i class="fas fa-sign-in-alt fa-fw me-3"></i><span class="sidebar-text">ログイン</span>
-                <% end %>
-              </div>
-            <% end %>
-          </div>
-
-          <%# --- メインコンテンツエリア --- %>
-          <div class="col p-0 d-flex flex-column h-100">
-            <% if notice || alert %>
-              <div class="container-fluid mt-2">
-                <% if notice %>
-                  <p class="alert alert-success mb-0"><%= notice %></p>
-                <% end %>
-                <% if alert %>
-                  <p class="alert alert-danger mb-0"><%= alert %></p>
-                <% end %>
-              </div>
-            <% end %>
-            <%= yield %>
-          </div>
+    <main class="flex-grow-1" style="overflow-y: auto;">
+      <% if notice || alert %>
+        <div class="container-fluid mt-2">
+          <% if notice %>
+            <p class="alert alert-success mb-0"><%= notice %></p>
+          <% end %>
+          <% if alert %>
+            <p class="alert alert-danger mb-0"><%= alert %></p>
+          <% end %>
         </div>
-      </div>
+      <% end %>
+      <%= yield %>
     </main>
+
   </body>
 </html>
