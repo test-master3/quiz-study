@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  before_action :basic_auth, if: -> { Rails.env.production? }, unless: :webhook_controller?
+  before_action :basic_auth, if: -> { Rails.env.production? }, unless: :api_or_webhook_controller?
   before_action :set_recent_questions, if: :user_signed_in?
 
   def after_sign_up_path_for(resource)
@@ -19,8 +19,8 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # LINEのWebhookからのリクエストかを判定するメソッド
-  def webhook_controller?
-    self.class == LineBotWebhookController
+  # APIまたはLINEのWebhookからのリクエストかを判定するメソッド
+  def api_or_webhook_controller?
+    self.class.name.start_with?('Api::') || self.class == LineBotWebhookController
   end
 end
