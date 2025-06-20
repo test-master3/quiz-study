@@ -1,5 +1,3 @@
-require 'line/bot'
-
 class LineBotWebhookController < ApplicationController
   protect_from_forgery except: :callback
 
@@ -28,11 +26,7 @@ class LineBotWebhookController < ApplicationController
   private
 
   def client
-    @client ||= ::Line::Bot::Client.new do |config|
-      # 環境変数から認証情報を設定
-      config.channel_secret = ENV['LINE_CHANNEL_SECRET']
-      config.channel_token = ENV['LINE_CHANNEL_TOKEN']
-    end
+    @client ||= LineClientFactory.build
   end
 
   def handle_message_event(event)
