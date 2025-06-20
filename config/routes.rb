@@ -29,6 +29,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       scope :line_notifications, module: :line_notifications, as: :line_notifications do
         get 'quiz_today', to: 'notifier#quiz_today'
+        get 'health_check', to: 'notifier#health_check'
       end
     end
   end

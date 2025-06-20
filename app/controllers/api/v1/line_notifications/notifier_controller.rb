@@ -3,7 +3,11 @@ module Api
     module LineNotifications
       class NotifierController < ApplicationController
         protect_from_forgery with: :null_session
-        before_action :check_api_key
+        before_action :check_api_key, except: [:health_check]
+
+        def health_check
+          render json: { status: "ok" }
+        end
 
         def quiz_today
           # LINE連携しており、クイズを1つ以上持っているユーザーを取得
