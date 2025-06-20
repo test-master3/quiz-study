@@ -15,9 +15,9 @@ class LineBotWebhookController < ApplicationController
     events = client.parse_events_from(body)
     events.each do |event|
       # メッセージイベント以外は処理しない
-      next unless event.is_a?(Line::Bot::Event::Message)
+      next unless event.is_a?(::Line::Bot::Event::Message)
       # テキストメッセージ以外は処理しない
-      next unless event.type == Line::Bot::Event::MessageType::Text
+      next unless event.type == ::Line::Bot::Event::MessageType::Text
 
       handle_message_event(event)
     end
@@ -28,7 +28,7 @@ class LineBotWebhookController < ApplicationController
   private
 
   def client
-    @client ||= Line::Bot::Client.new do |config|
+    @client ||= ::Line::Bot::Client.new do |config|
       # 環境変数から認証情報を設定
       config.channel_secret = ENV['LINE_CHANNEL_SECRET']
       config.channel_token = ENV['LINE_CHANNEL_TOKEN']
