@@ -12,6 +12,13 @@ class LineWebhookController < ApplicationController
       when Line::Bot::Event::Follow
         line_user_id = event['source']['userId']
         session[:line_uid] = line_user_id
+
+        # ID連携を促すメッセージを返信する
+        message = {
+          type: 'text',
+          text: "アカウントの連携を開始します。下のURLからログインしてください。\n#{new_line_account_url}"
+        }
+        client.reply_message(event['replyToken'], message)
       end
     end
 
