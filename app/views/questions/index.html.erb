@@ -3,9 +3,14 @@
     <%= form_with url: bulk_delete_questions_path, method: :delete, data: { controller: "checkbox-select-all" } do |form| %>
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h2 mb-0">質問一覧</h1>
-        <%= link_to root_path, class: "btn btn-primary" do %>
-          <i class="fas fa-home me-2"></i>トップページへ
-        <% end %>
+        <div>
+          <%= form.button type: 'submit', class: 'btn btn-danger', data: { turbo_confirm: '選択した質問を本当に削除しますか？' } do %>
+            <i class="fas fa-trash-alt"></i> 選択した項目を削除
+          <% end %>
+          <%= link_to root_path, class: "btn btn-primary" do %>
+            <i class="fas fa-home me-2"></i>トップページへ
+          <% end %>
+        </div>
       </div>
 
       <% if @questions.any? %>

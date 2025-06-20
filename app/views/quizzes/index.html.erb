@@ -3,48 +3,46 @@
   <div class="row">
     <div class="col-md-10 mx-auto">
       <div class="user-profile">
-        <h2>LINE送信クイズ管理</h2>
-
-        <div data-controller="checkbox-select-all">
-          <%= form_with url: manage_quizzes_path, method: :post, class: "quiz-form" do %>
-            
-            <div class="form-header mb-3 d-flex justify-content-between">
-              <%= button_tag type: 'submit', name: "commit", value: "delete",
-                  data: { turbo_confirm: "選択したクイズを本当に削除しますか？" }, 
-                  class: "submit-button danger" do %>
-                <i class="fas fa-trash-alt"></i> 選択したクイズを削除
+        <%= form_with url: manage_quizzes_path, method: :post, class: "quiz-form", data: { controller: "checkbox-select-all" } do |form| %>
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h2 mb-0">クイズ管理</h1>
+            <div>
+              <%= form.button type: 'submit', name: 'commit', value: 'delete', class: 'btn btn-danger', data: { turbo_confirm: '選択したクイズを本当に削除しますか？' } do %>
+                <i class="fas fa-trash-alt"></i> 選択した項目を削除
               <% end %>
-              <%= submit_tag "送信対象を更新する", class: "submit-button" %>
+              <%= form.button type: 'submit', name: 'commit', value: 'update', class: 'btn btn-success' do %>
+                <i class="fas fa-paper-plane"></i> 送信対象を更新する
+              <% end %>
             </div>
+          </div>
 
-            <table class="quiz-table">
-              <thead>
+          <table class="quiz-table">
+            <thead>
+              <tr>
+                <th class="pe-3">
+                  <input type="checkbox" data-checkbox-select-all-target="master" data-action="checkbox-select-all#toggle" id="quizzes_delete_select_all">
+                  削除
+                </th>
+                <th class="px-4">LINEへ送信</th>
+                <th>クイズ内容</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% @quizzes.each do |quiz| %>
                 <tr>
-                  <th class="pe-3">
-                    <input type="checkbox" data-checkbox-select-all-target="master" data-action="checkbox-select-all#toggle" id="quizzes_delete_select_all">
-                    削除
-                  </th>
-                  <th class="px-4">LINEへ送信</th>
-                  <th>クイズ内容</th>
+                  <td class="pe-3">
+                    <input type="checkbox" name="delete_quiz_ids[]" value="<%= quiz.id %>" data-checkbox-select-all-target="child" id="quiz_delete_<%= quiz.id %>">
+                  </td>
+                  <td class="px-4">
+                    <%= check_box_tag "quiz_ids[]", quiz.id, quiz.send_to_line, class: "send-checkbox", id: "quiz_send_#{quiz.id}" %>
+                  </td>
+                  <td><%= quiz.quiz_text %></td>
                 </tr>
-              </thead>
-
-              <tbody>
-                <% @quizzes.each do |quiz| %>
-                  <tr>
-                    <td class="pe-3">
-                      <input type="checkbox" name="delete_quiz_ids[]" value="<%= quiz.id %>" data-checkbox-select-all-target="child" id="quiz_delete_<%= quiz.id %>">
-                    </td>
-                    <td class="px-4">
-                      <%= check_box_tag "quiz_ids[]", quiz.id, quiz.send_to_line, class: "send-checkbox", id: "quiz_send_#{quiz.id}" %>
-                    </td>
-                    <td><%= quiz.quiz_text %></td>
-                  </tr>
-                <% end %>
-              </tbody>
-            </table>
-          <% end %>
-        </div>
+              <% end %>
+            </tbody>
+          </table>
+        <% end %>
       </div>
     </div>
   </div>
