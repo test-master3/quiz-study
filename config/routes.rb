@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   get 'gemini', to: 'gemini#index'
 
   # LINE連携関連
-  resources :line_accounts, only: [:new, :create]
+  resources :line_accounts, only: [:new]
   post '/line/webhook', to: 'line_webhook#callback'
 
   # Deviseユーザー認証

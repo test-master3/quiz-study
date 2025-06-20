@@ -7,16 +7,23 @@
           <h2>LINE連携</h2>
         </div>
         <div class="card-body">
-          <p class="card-text">以下のQRコードを読み取って、<br>LINEで友だち追加をしてください。</p>
+          <p class="card-text">
+            1. 以下のQRコードを読み取って、<br>LINEで公式アカウントを友だち追加してください。
+          </p>
 
           <%# app/assets/images/line_qr_code.png を表示します %>
           <%= image_tag "line_qr_code.png", alt: "LINE連携用QRコード", class: "img-fluid my-3", style: "max-width: 250px;" %>
 
-          <p class="card-text">友だち追加が完了したら、<br>下のボタンを押して連携を完了してください。</p>
-          <%= button_to "LINEと連携する", line_accounts_path, method: :post, class: "btn btn-success btn-lg mt-3" %>
+          <p class="card-text">
+            2. 友だち追加後、LINEのトーク画面で<br>以下の6桁の連携コードを送信してください。
+          </p>
+
+          <div class="alert alert-info d-inline-block my-3">
+            <h3 class="font-weight-bold tracking-wider mb-0"><%= @link_token %></h3>
+          </div>
         </div>
         <div class="card-footer text-muted">
-          <p class="mb-0">連携すると、クイズの通知などがLINEで受け取れるようになります。</p>
+          <p class="mb-0">連携が完了すると、LINEに通知が届きます。</p>
         </div>
       </div>
     </div>
