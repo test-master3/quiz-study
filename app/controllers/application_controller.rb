@@ -16,6 +16,6 @@ class ApplicationController < ActionController::Base
 
   # LINEのWebhookからのリクエストかを判定するメソッド
   def webhook_controller?
-    self.class == LineWebhookController
+    self.class == LineBotWebhookController
   end
 end
