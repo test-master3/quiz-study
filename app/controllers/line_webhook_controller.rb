@@ -27,7 +27,7 @@ class LineWebhookController < ApplicationController
   private
 
   def client
-    @client ||= Line::Bot::Client.new do |config|
+    @client ||= ::Line::Bot::Client.new do |config|
       # 環境変数から認証情報を設定
       config.channel_secret = ENV['LINE_CHANNEL_SECRET']
       config.channel_token = ENV['LINE_CHANNEL_TOKEN']
