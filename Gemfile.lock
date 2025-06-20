@@ -223,7 +223,7 @@ GEM
     json (2.12.2)
     jwt (2.10.1)
       base64
-    line-bot-api (2.0.0)
+    line-bot-api (1.30.0)
       base64 (~> 0.2)
       multipart-post (~> 2.4)
     logger (1.7.0)
@@ -417,7 +417,7 @@ DEPENDENCIES
   httparty (~> 0.23.1)
   importmap-rails
   jbuilder
-  line-bot-api
+  line-bot-api (~> 1.0)
   mysql2 (~> 0.5)
   pg (~> 1.5)
   puma (>= 5.0)
