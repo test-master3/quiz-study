@@ -69,7 +69,7 @@ class QuestionsController < ApplicationController
       content: @question.answer_text,
     )
 
-    redirect_to questions_path, notice: "クイズと回答を保存しました！"
+    redirect_to quizzes_path, notice: "クイズと回答を保存しました！"
   end
 
   def bulk_delete
