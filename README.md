@@ -209,7 +209,44 @@ belongs_to :quiz
 
 ## 🗂️ ER図
 
-[![ER図](https://via.placeholder.com/800x400.png?text=ER図をここに配置)](https://via.placeholder.com/800x400.png?text=ER図をここに配置)
+```mermaid
+erDiagram
+    users {
+        string email "メールアドレス"
+        string encrypted_password "パスワード"
+        string line_uid "LINE UID"
+    }
+    questions {
+        text content "質問"
+        text answer_text "回答(AI)"
+        text analogy_text "例え話(AI)"
+        text quiz_question "クイズ問題(AI)"
+        text quiz_choices "クイズ選択肢(AI)"
+        string quiz_answer "クイズ正解(AI)"
+        string abstraction_level "抽象度"
+        string analogy_genre "ジャンル"
+        reference user_id "FK"
+    }
+    quizzes {
+        text quiz_text "クイズ問題"
+        text quiz_choices "クイズ選択肢"
+        string quiz_link "復習リンク"
+        boolean send_to_line "LINE配信"
+        reference user_id "FK"
+        reference question_id "FK"
+    }
+    answers {
+        text content "回答履歴"
+        reference user_id "FK"
+        reference quiz_id "FK"
+    }
+
+    users ||--o{ questions : "投稿"
+    users ||--o{ quizzes : "保存"
+    users ||--o{ answers : "回答"
+    questions |o--|| quizzes : "元になる"
+    quizzes ||--o{ answers : "持つ"
+```
 
 ---
 
@@ -217,29 +254,37 @@ belongs_to :quiz
 
 ```mermaid
 graph TD
-    A[ログイン / 新規登録] --> B{質問ページ}
+    A["ログイン / 新規登録"] --> B("質問ページ");
 
     subgraph "質問ページ"
-        B_S[質問入力フォーム]
-        B_L[過去の質問履歴]
+        B1["質問入力フォーム"];
+        B2["質問・回答履歴"];
     end
 
-    B_S -- 質問投稿 --> C{AIが回答・クイズ生成};
-    C -- 結果を画面に表示 --> B_L;
+    B -- "表示" --> B1;
+    B -- "表示" --> B2;
 
-    B_L -- クイズを保存 --> D[Quizzes#create];
-    D --> E{クイズ管理ページ};
+    B1 -- "質問投稿" --> C{"AIが回答・クイズ生成"};
+    C -- "結果を履歴に表示" --> B2;
 
-    B_L -- 質問を削除 --> F[Questions#bulk_delete];
-    F --> B;
+    B2 -- "クイズを保存" --> D("クイズ管理ページ");
+    B2 -- "質問を削除" --> B;
 
     subgraph "クイズ管理ページ"
-        E_L[保存済みクイズ一覧]
-        E_A[LINE配信設定]
+        D1["保存済みクイズ一覧"];
+        D2["LINE配信設定"];
     end
 
-    E_A -- 配信設定を更新 --> G[Quizzes#update_send_to_line]
-    G --> E
+    D -- "表示" --> D1;
+    D -- "表示" --> D2;
+
+    D1 -- "配信クイズ選択" --> D2;
+    D2 -- "設定更新" --> D;
+
+    subgraph "外部連携"
+        D -- "定期配信を依頼" --> E["Google Apps Script"];
+        E -- "毎日クイズを通知" --> F["LINE"];
+    end
 ```
 
 ## 🚀 今後の実装予定
