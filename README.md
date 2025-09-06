@@ -32,10 +32,6 @@
 
 🔗 [https://quiz-study-ibeu.onrender.com/](https://quiz-study-ibeu.onrender.com/)
 
-## テスト用アカウント
-
-- **mail** ： `test@example.com`
-- **パスワード** ： `testtest`
 
 ---
 
